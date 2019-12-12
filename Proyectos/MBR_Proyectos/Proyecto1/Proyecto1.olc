@@ -1,0 +1,44 @@
+{
+     proyecto: 
+     {
+       ruta:"C:\\ProyectosMBR\\Proyecto1",
+       nombre:"proyecto1",
+       correr:"principal\\main.r",
+       configuracion:
+       {
+         archivo:
+         {
+           nombre:"proyecto1.olc",
+           fecha_mod:"01/01/2019 00:00:00"
+         },
+         carpeta:
+         {
+           nombre:"principal",
+           archivo:
+           {
+             nombre:"main.r",
+             fecha_mod:"02/01/2019 00:00:00"
+           },
+           archivo:
+           {
+             nombre:"funciones.m",
+             fecha_mod:"03/01/2019 00:00:00"
+           },           
+           carpeta:
+           {
+             nombre:"UI",
+             archivo:
+             {
+               nombre:"frame.b",
+               fecha_mod:"04/01/2019 00:00:00"
+             },
+             archivo:
+             {
+               nombre:"masCodigo.m",
+               fecha_mod:"05/01/2019 00:00:00"
+             }
+           }
+         }
+       }
+     }
+}

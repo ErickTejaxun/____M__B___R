@@ -1,0 +1,255 @@
+package Analisis.olc;
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import AST.AST;
+import AST.Instruccion.Instruccion;
+import Utilidades.ErrorC;
+import Analisis.olc.Proyecto.*;
+parser code
+{:	   	
+	public ArrayList<ErrorC> listaErrores = new ArrayList();	
+	public ArrayList<Instruccion> ast = new ArrayList<Instruccion>();
+	public Proyecto proyecto = null;
+    
+    public elemento tipoElemento;
+	/*@Override
+	public void syntax_error(Symbol cur_token) 
+	{        
+		List<Integer> listaIdTokens = expected_token_ids();
+		LinkedList<String> listaNombres = new LinkedList<String>();
+		for (Integer expected : listaIdTokens) 
+		{			
+			listaNombres.add(symbl_name_from_id(expected));
+		}		
+		Utilidades.Singlenton.registrarError(String.valueOf(cur_token.value), 
+			String.valueOf(cur_token.value) + ". Se esperaba :"+listaNombres.toString(), ErrorC.TipoError.LEXICO, cur_token.right+1, cur_token.left+1);
+		/*listaErrores.add(
+					listaErrores.add(new ErrorC(ErrorC.TipoError.SINTACTICO,
+								String.valueOf(cur_token.value) + ". Se esperaba :"+listaNombres.toString(),
+								cur_token.right+1,
+								cur_token.left+1));
+                
+	}*/
+
+
+    public void report_error(String message, Object info) 
+    {
+        int linea = 0;
+        int columna = 0;
+        java_cup.runtime.Symbol s = null;
+        StringBuilder m = new StringBuilder("Error Sintactico");
+
+        if (info instanceof java_cup.runtime.Symbol) 
+        {
+            s = ((java_cup.runtime.Symbol) info);
+            if (s.left >= 0) 
+            {                
+                columna = s.left+1;
+                if (s.right>= 0)
+                {
+                    linea = s.right+ 1;
+                }                    
+            }
+        }
+
+        m.append(" Se esperaba: "+message);
+        //System.err.println(m.toString());
+        //System.out.println("Error");
+        //System.out.println("Error linea:"+linea+", col:"+columna);
+        LinkedList<String> toks = new LinkedList();
+
+        if(!expected_token_ids().isEmpty())
+        {
+            Imprimir("No esta vacia "+ expected_token_ids().size());		  
+            for(int w=0; w<expected_token_ids().size(); w++)
+            { 
+                if(expected_token_ids().get(w) !=sym.error)
+                {
+                    int tok = (int)expected_token_ids().get(w);                        
+                    toks.add( symbol_name_from_id(tok) );
+                }
+            }
+        }
+
+        Imprimir(expected_token_ids().size());
+      
+        for(int w=0; w<expected_token_ids().size(); w++)
+        { 
+            if(expected_token_ids().get(w)!=sym.error)
+            {
+                int tok = (int)expected_token_ids().get(w);
+                toks.add( symbol_name_from_id(tok) );
+            }
+        }
+        String esperados = "";
+        for(String id : toks)
+        {
+            if(!esperados.equals(""))
+            {
+                esperados += ", ";
+            }
+            esperados += id;
+            
+        }        
+        Utilidades.Singlenton.registrarError(s.value.toString(), "Se esperaba .. " +esperados, ErrorC.TipoError.SINTACTICO, linea, columna);		                  
+    }	
+
+    public String symbol_name_from_id(int id){
+        return sym.terminalNames[id];
+    }
+
+	/*public void addError(Symbol s)
+	{
+		listaErrores.add(new ErrorC("Sintactico",s.rights.right+1,ConvertirObjectToString(s.value)));
+	}*/
+	public void Imprimir(Object cad)
+	{
+		System.out.println(cad.toString());
+	}	
+
+:}
+
+
+terminal String tproyecto, tconfiguracion, truta, tnombre, tcorrer, tarchivo, tfecha, tcarpeta;
+terminal String coma, dospuntos, llavei, llaved, cadena;
+
+
+non terminal INICIO;
+non terminal Proyecto PROYECTO;
+non terminal Proyecto CONTENIDO;
+non terminal Proyecto ITEM;
+non terminal String NOMBRE;
+non terminal String CORRER;
+non terminal Carpeta CONFIGURACION;
+non terminal Carpeta ELEMENTOS;
+non terminal Carpeta ELEMENTO;
+non terminal Archivo ARCHIVO;
+non terminal Archivo PROPSARCHIVO;
+non terminal String PROPARCHIVO;
+non terminal String FECHA;
+non terminal Carpeta CARPETA;
+non terminal String RUTA;
+
+start with INICIO;
+
+INICIO ::= llavei PROYECTO:pro llaved {: Imprimir("Correcto OLC."); proyecto = pro; :}
+            ;
+
+
+PROYECTO ::= tproyecto dospuntos llavei CONTENIDO:proyecto llaved{:RESULT = proyecto;:}
+            ; 
+
+CONTENIDO::= CONTENIDO:pro ITEM:proyTmp 
+            {:
+                RESULT = pro;
+                switch(tipoElemento)
+                {
+                    case RUTA:
+                        pro.ruta = proyTmp.ruta;
+                        break;
+                    case NOMBRE:
+                        pro.nombre = proyTmp.nombre;
+                        break;
+                    case CORRER:
+                        pro.rutaRun = proyTmp.rutaRun;
+                        break;
+                    case CONF:
+                        pro.carpeta = proyTmp.carpeta;
+                        break;
+                }
+            :}
+            | ITEM:pro {: RESULT= pro;:}
+            ; 
+
+ITEM ::= RUTA:v {:RESULT = new Proyecto(); RESULT.ruta = v; tipoElemento= Proyecto.elemento.RUTA;:}
+        |NOMBRE:v {:RESULT = new Proyecto(); RESULT.nombre = v; tipoElemento = Proyecto.elemento.NOMBRE;:}
+        |CORRER:v     {:RESULT = new Proyecto(); RESULT.rutaRun = v; tipoElemento = Proyecto.elemento.CORRER;:}
+        |CONFIGURACION:carpeta {:RESULT = new Proyecto(); RESULT.carpeta = carpeta; tipoElemento = Proyecto.elemento.CONF;:}
+        ;
+
+RUTA ::= truta dospuntos cadena:cad coma {: RESULT = cad; tipoElemento = Proyecto.elemento.RUTA;:}
+;
+
+NOMBRE ::= tnombre dospuntos cadena:cad coma 
+        {: 
+            RESULT = cad; 
+            tipoElemento = Proyecto.elemento.NOMBRE;
+            Imprimir("Nombre elemento \t"+cad);
+        :}
+;
+
+CORRER ::= tcorrer dospuntos cadena:cad coma {: RESULT = cad; tipoElemento = Proyecto.elemento.CORRER;:}
+;
+
+CONFIGURACION ::= tconfiguracion dospuntos llavei ELEMENTOS:carpeta llaved 
+        {:
+            RESULT = carpeta;
+        :}
+;
+
+ELEMENTOS::= ELEMENTOS:carpeta coma ELEMENTO:carpeta2
+            {:
+                RESULT = carpeta;
+                for(Carpeta car : carpeta2.subcarpetas)
+                {
+                    RESULT.subcarpetas.add(car);
+                }
+                for(Archivo arch : carpeta2.archivos)
+                {
+                    RESULT.archivos.add(arch);
+                }
+            :}
+            | ELEMENTO:carpeta {: RESULT = carpeta;:}
+;
+
+ELEMENTO ::= ARCHIVO:archivo {:RESULT = new Carpeta(); RESULT.archivos.add(archivo);:}  
+            |CARPETA:carpeta {:RESULT = new Carpeta(); RESULT.subcarpetas.add(carpeta);:}
+;
+
+ARCHIVO::=  tarchivo dospuntos llavei PROPSARCHIVO:archivo llaved {: RESULT = archivo;:}
+;
+
+PROPSARCHIVO ::= PROPSARCHIVO:archivo PROPARCHIVO:v
+                {: 
+                    RESULT = archivo;
+                    if(tipoElemento == Proyecto.elemento.NOMBRE)
+                    {
+                        RESULT.nombre = v;
+                    }
+                    if(tipoElemento == Proyecto.elemento.FECHA_MOD)
+                    {
+                        RESULT.fecha =v;
+                    }                                    
+                :}
+                |PROPARCHIVO:v 
+                {: 
+                    RESULT = new Archivo(); 
+                    if(tipoElemento == Proyecto.elemento.NOMBRE)
+                    {
+                        RESULT.nombre = v;
+                    }
+                    if(tipoElemento == Proyecto.elemento.FECHA_MOD)
+                    {
+                        RESULT.fecha =v;
+                    }                                    
+                :}
+;
+
+PROPARCHIVO ::=  NOMBRE:v {: RESULT = v ; tipoElemento =Proyecto.elemento.NOMBRE;  Imprimir("Nombre\t"+v);:}
+                |FECHA:v {: RESULT = v ; tipoElemento =Proyecto.elemento.FECHA_MOD; Imprimir("Fecha\t"+v);:}
+;
+
+FECHA ::= tfecha dospuntos cadena:cad {:RESULT = cad; :}
+;
+
+CARPETA ::= tcarpeta dospuntos llavei NOMBRE:n ELEMENTOS:carpeta llaved 
+        {:              
+            RESULT = carpeta;
+            RESULT.nombre = n;
+        :}
+;
+
+
+

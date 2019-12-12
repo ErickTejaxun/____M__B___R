@@ -1,0 +1,381 @@
+package Analisis;
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import AST.*;
+import Utilidades.ErrorC;
+import AST.Instruccion.*;
+import AST.Instruccion.Ciclos.*;
+import AST.Expresion.*;
+import AST.Entorno.*;
+import AST.Expresion.Aritmetica.*;
+import AST.Expresion.Relacional.*;
+import AST.Expresion.Logica.*;
+import AST.Expresion.Arreglo.*;
+import AST.Expresion.Casteo.*;
+import AST.Expresion.Casteo.Explicito.*;
+import AST.Expresion.Funcion.*;
+import AST.Clase.*;
+
+
+parser code
+{:	   	
+	public ArrayList<ErrorC> listaErrores = new ArrayList();	
+	public ArrayList<Instruccion> ast = new ArrayList<Instruccion>();
+
+	public AST raiz = null;
+
+	/*@Override
+	public void syntax_error(Symbol cur_token) 
+	{        
+		List<Integer> listaIdTokens = expected_token_ids();
+		LinkedList<String> listaNombres = new LinkedList<String>();
+		for (Integer expected : listaIdTokens) 
+		{			
+			listaNombres.add(symbl_name_from_id(expected));
+		}		
+		Utilidades.Singlenton.registrarError(String.valueOf(cur_token.value), 
+			String.valueOf(cur_token.value) + ". Se esperaba :"+listaNombres.toString(), ErrorC.TipoError.LEXICO, cur_token.right+1, cur_token.left+1);
+		/*listaErrores.add(
+					listaErrores.add(new ErrorC(ErrorC.TipoError.SINTACTICO,
+								String.valueOf(cur_token.value) + ". Se esperaba :"+listaNombres.toString(),
+								cur_token.right+1,
+								cur_token.left+1));
+                
+	}*/
+
+
+    public void report_error(String message, Object info) 
+    {
+        int linea = 0;
+        int columna = 0;
+        java_cup.runtime.Symbol s = null;
+        StringBuilder m = new StringBuilder("Error Sintactico");
+
+        if (info instanceof java_cup.runtime.Symbol) 
+        {
+            s = ((java_cup.runtime.Symbol) info);
+            if (s.left >= 0) 
+            {                
+                columna = s.left+1;
+                if (s.right>= 0)
+                {
+                    linea = s.right+ 1;
+                }                    
+            }
+        }
+
+        m.append(" Se esperaba: "+message);
+        //System.err.println(m.toString());
+        //System.out.println("Error");
+        //System.out.println("Error linea:"+linea+", col:"+columna);
+        LinkedList<String> toks = new LinkedList();
+
+        if(!expected_token_ids().isEmpty())
+        {
+            Imprimir("No esta vacia "+ expected_token_ids().size());		  
+            for(int w=0; w<expected_token_ids().size(); w++)
+            { 
+                if(expected_token_ids().get(w) !=sym.error)
+                {
+                    int tok = (int)expected_token_ids().get(w);                        
+                    toks.add( symbol_name_from_id(tok) );
+                }
+            }
+        }
+
+        Imprimir(expected_token_ids().size());
+      
+        for(int w=0; w<expected_token_ids().size(); w++)
+        { 
+            if(expected_token_ids().get(w)!=sym.error)
+            {
+                int tok = (int)expected_token_ids().get(w);
+                toks.add( symbol_name_from_id(tok) );
+            }
+        }
+        String esperados = "";
+        for(String id : toks)
+        {
+            if(!esperados.equals(""))
+            {
+                esperados += ", ";
+            }
+            esperados += id;
+            
+        }        
+        Utilidades.Singlenton.registrarError(s.value.toString(), "Se esperaba .. " +esperados, ErrorC.TipoError.SINTACTICO, linea, columna);		                  
+    }	
+
+    public String symbol_name_from_id(int id){
+        return sym.terminalNames[id];
+    }
+
+	/*public void addError(Symbol s)
+	{
+		listaErrores.add(new ErrorC("Sintactico",s.rights.right+1,ConvertirObjectToString(s.value)));
+	}*/
+	public void Imprimir(Object cad)
+	{
+		System.out.println(cad.toString());
+	}	
+:}
+
+
+terminal String tint, tdouble, tchar, tbool, tstring, puntocoma, llavei, llaved, pari, pard, id, corchetei, corcheted, igual, print, println, coma;
+terminal String igualigual, desigual, mayor, menor, menorigual, mayorigual, potencia , tvoid, nulo, tcomodin;
+terminal String abstracto, caso, cat, clase, defecto, hacer, extiende, final_, graph;
+terminal String importar, instanceof_, nuevo, privado, protegido, publico, retorno;
+terminal String arroba, sobrescrito;
+
+/*Palabras reservadas :v*/
+terminal String tdefinir, tfusion, tconcatenar, tatexto, taentero, tadecimal, tpeso, treservar, teql, twrite, twriteend, tclose;
+terminal String repetir;
+/*Casteos*/
+terminal String leerarchivo,estatico, super_, switch_, este, tochar, todouble, toint, str_, try_, escribir;
+terminal String mientras, para, romper, continuar ,interrogante, dospuntos, aumento, decremento, punto;
+terminal String not, and, or, si, sinosi, sino, tostring, tolower, touper;
+terminal String suma, menos, multi, div, xor, printable, modulo;
+terminal String cadena;
+terminal char caracter;
+terminal int entero;
+terminal double decimal;
+terminal boolean booleano;
+
+non terminal Bloque BLOQUE;
+non terminal ArrayList<Nodo> LINST;
+non terminal Nodo INST;
+non terminal Declaracion DECLARACION;
+non terminal Expresion EXP, AUMENTO, DECREMENTO, EXPLICITCAST;
+non terminal INICIO;
+non terminal Tipo PRIMITIVO;
+non terminal Imprimir PRINT;
+non terminal ImprimirT PRINTABLE;
+non terminal Asignacion ASIG;
+non terminal While WHILE;
+non terminal DoWhile DOWHILE;
+non terminal Break BREAK;
+non terminal Continuar CONTINUE;
+non terminal If IF, ELSE;
+non terminal Ternario TER;
+non terminal For FOR;
+non terminal Expresion ACTUALIZACION, EXPRETORNO;
+non terminal Integer NDIM;
+non terminal ArrayList<Expresion> LEXP, LVALORES;
+non terminal AsignacionVector ASIGV;
+non terminal NodoNario ITEM,LITEM,ARR;
+non terminal Tipo TIPO;
+non terminal ArrayList<Dec> LDEC;
+non terminal Dec DEC;
+non terminal ForEach FOREACH;
+non terminal Caso CASO, DEFECTO;
+non terminal ArrayList<Caso> LCASO;
+non terminal Switch SWITCH;
+non terminal ArrayList<String> LMODFICADOR;
+non terminal String MODFUNCION, MODCONST;
+non terminal Tipo RESULTADO;
+non terminal ParametroFormal PARFORMAL;
+non terminal ArrayList<ParametroFormal> LPARFORMAL;
+/*non terminal Constructor CONSTRUCTOR;*/
+non terminal Funcion FUNCION, CABECERAMET;
+/*non terminal ArrayList<Nodo> LFUNCION;*/
+non terminal Retorno RETORNO;
+non terminal Llamada LLAMADA;
+non terminal String MODATRIB;
+non terminal ArrayList<Expresion> PARACTUALES,ACTUALES;
+
+/*Atributos de clase*/
+/*non terminal ArrayList<String> LMODATRIB;*/
+/*non terminal ArrayList<Nodo> LDECATRIB;*/
+non terminal DeclaracionAtributo DECATRIB;
+
+/*Arreglos*/
+non terminal Expresion VALORARREGLO ;
+non terminal Expresion ACCESO, ORIGEN;
+non terminal Expresion INSTANCIA;
+non terminal Expresion VALORASIGNACION;
+non terminal Importar IMPORTAR;
+/*
+precedence left interrogante, punto;
+precedence left or;
+precedence left and;
+precedence left xor;
+precedence left igualigual, desigual;
+precedence left menor, mayor, mayorigual, menorigual, instanceof_;
+precedence left suma, menos;
+precedence left multi, div, modulo;
+precedence left not;
+precedence left aumento, decremento ;
+*/
+
+precedence right interrogante, dospuntos;
+precedence left or;
+precedence left and;
+precedence left xor;
+precedence left igualigual, desigual;
+precedence left menor, menorigual, mayor, mayorigual, instanceof_;
+precedence left suma, menos;
+precedence left div, multi, modulo;
+precedence left potencia;
+precedence left not;
+precedence right nuevo;
+precedence nonassoc aumento, decremento, not;
+precedence nonassoc pard , pari;
+precedence nonassoc corcheted , corchetei;
+precedence left punto;
+
+
+
+start with INICIO;
+
+INICIO ::= LINST:lista {: Imprimir("Correcto"); raiz = new AST(lista);; :}		
+		;
+       
+LINST::= LINST:lista INST:inst {: lista.add(inst); RESULT = lista;:}
+	    |INST:inst {: ArrayList<Nodo> l = new ArrayList<Nodo>(); l.add(inst); RESULT = l;:} 
+;
+
+INST::= PRINT:inst {: RESULT = inst;:}
+       |DECLARACION:inst puntocoma {: RESULT = inst;:}
+;
+
+
+DECLARACION::= TIPO:t LDEC:lista {: RESULT = new Declaracion(t, lista, tright, tleft); :} ;
+
+LDEC::= LDEC:lista  coma DEC:dec {: lista.add(dec); RESULT = lista;:}
+        |DEC:dec {: ArrayList<Dec> lista = new ArrayList<Dec>(); lista.add(dec); RESULT = lista;:}
+;
+
+DEC::= 
+      id:id {: RESULT = new Dec(id,idright, idleft);:}
+    | id:id igual VALORASIGNACION:valor {: RESULT = new Dec(id,valor, idright, idleft);:}
+    | id:id NDIM:dim {: RESULT = new Dec(id,dim, idright, idleft);:}
+    | id:id NDIM:dim igual VALORARREGLO:valor {: RESULT = new Dec(id,dim, valor, idright, idleft);:}
+    | id:id NDIM:dim igual ARR:valor {: RESULT = new Dec(id,dim, new ExpresionArreglo(valor, valorright, valorleft), idright, idleft);:}
+;   
+
+/*Dimensiones*/
+NDIM::= NDIM:n corchetei corcheted                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           corcheted {:RESULT = n+1;:}
+        |corchetei corcheted {: RESULT = 1;:}
+;  
+
+
+VALORARREGLO::=
+          llavei LEXP:l  llaved {: RESULT = new ExpresionArreglo(l,lright,lleft);:}
+        /*|nuevo:n id:tipo LEXP:l {: RESULT = new ExpresionArreglo(new Tipo(tipo), l,nright,nleft);:}*/
+;
+
+VALORASIGNACION::= 
+            EXP:exp {:RESULT = exp;:}
+          /*|  INSTANCIA:exp  {:RESULT = exp;:}*/
+          /*| nulo:r {:RESULT = new Literal(new Tipo(Tipo.TypePrimitive.NULO), null, rright, rleft);:}*/
+;
+
+ARR::= llavei LITEM:nodo llaved {: RESULT = nodo;:}
+;
+
+LITEM::= LITEM:nodo coma ITEM:item {: nodo.addHijo(item); RESULT = nodo; :}
+        |ITEM:item  {: NodoNario nodo = new NodoNario(); nodo.addHijo(item); RESULT = nodo;:}
+;
+
+ITEM::= EXP:exp {: RESULT = new NodoNario(exp);:} 
+        |ARR:exp {: RESULT = exp;:} 
+;
+
+
+PRINT::= print:p pari cadena:v pard puntocoma 
+        {: 
+            RESULT = new Imprimir(
+                    new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft), 
+                    pright,
+                    pleft);  
+        :}
+        |print:p pari cadena:v coma LVALORES:l pard puntocoma 
+        {: 
+            RESULT = new Imprimir(
+                    new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft), 
+                    pright,
+                    pleft,
+                    l);  
+        :}        
+;
+
+
+LVALORES ::= LVALORES:l coma EXP:exp {:RESULT = l; RESULT.add(exp); :}
+            |EXP:exp {: RESULT = new ArrayList<Expresion>(); RESULT.add(exp); :}
+;
+
+LEXP::= LEXP:l corchetei EXP:exp corcheted{:l.add(exp); RESULT = l;:}
+        | corchetei EXP:exp corcheted {: ArrayList<Expresion> l = new ArrayList<Expresion>(); l.add(exp); RESULT = l;:}
+;
+
+EXP::= 
+        /*Lógicas*/
+         EXP:opi and EXP:opd {: RESULT = new And(opi, opd, opiright,opileft);:}
+        |EXP:opi or EXP:opd {: RESULT = new Or(opi, opd, opiright,opileft);:}
+        |EXP:opi xor EXP:opd {: RESULT = new Xor(opi,opd,opiright,opileft);:} 
+        /*Instanceof*/
+        |EXP:op instanceof_ id:tipo {:RESULT = new InstanceOf(op,tipo, opright, opleft);:}        
+        |not EXP:op {: RESULT = new Not(op, opright,opleft);:}        
+        /*Relacionales*/
+        |EXP:opi igualigual EXP:opd {:RESULT = new Igual(opi,opd,opiright,opileft);:}
+        |EXP:opi desigual EXP:opd {:RESULT = new Desigual(opi,opd,opiright,opileft);:}
+        |EXP:opi mayor EXP:opd {:RESULT = new Mayor(opi,opd,opiright,opileft);:}
+        |EXP:opi mayorigual EXP:opd {:RESULT = new MayorIgual(opi,opd,opiright,opileft);:}
+        |EXP:opi menor EXP:opd {:RESULT = new Menor(opi,opd,opiright,opileft);:}
+        |EXP:opi menorigual EXP:opd {:RESULT = new MenorIgual(opi,opd,opiright,opileft);:}        
+        /*Ariteticas*/
+        |EXP:opi suma EXP:opd {: RESULT = new Suma(opi,opd,opiright,opileft);:}       
+        |EXP:opi menos EXP:opd {: RESULT = new Resta(opi,opd,opiright,opileft);:}          
+        |EXP:opi multi EXP:opd {: RESULT = new Multiplicacion(opi,opd,opiright,opileft);:}  
+        |EXP:opi div EXP:opd {: RESULT = new Division(opi,opd,opiright,opileft);:}  
+        |EXP:opi modulo EXP:opd {: RESULT = new Modulo(opi,opd,opiright,opileft);:}  
+        |EXP:opi potencia EXP:opd {:RESULT = new Potencia(opi,opd,opiright,opileft);:}        
+        |menos EXP:op {: RESULT = new Menos(op, opright,opleft);:}
+        /*Ternario*/                      
+        /*Aumento ++ y --*/
+        |AUMENTO:op {:RESULT = op;:}        
+        |DECREMENTO:op {:RESULT = op;:}        
+        /*|LLAMADA:exp {:RESULT = exp;:}*/
+        /*Primitivas*/
+        |entero:v {: RESULT = new Literal(new Tipo(Tipo.TypePrimitive.INT), v, vright,vleft);:}
+        |decimal:v {: RESULT = new Literal(new Tipo(Tipo.TypePrimitive.DOUBLE), v, vright,vleft);:}
+        |booleano:v {: RESULT = new Literal(new Tipo(Tipo.TypePrimitive.BOOL), v, vright,vleft);:}
+        |cadena:v {: RESULT = new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft);:}
+        |caracter:v {: RESULT = new Literal(new Tipo(Tipo.TypePrimitive.CHAR), v, vright,vleft);:}
+        /*ACCESO*/
+        |ACCESO:v {:RESULT = v;:}
+        |pari EXP:op pard {: RESULT = op;:}
+        /*|EXPLICITCAST:exp {:RESULT = exp;:}*/
+        | nulo:r {:RESULT = new Literal(new Tipo(Tipo.TypePrimitive.NULO), null, rright, rleft);:}       
+;
+
+AUMENTO::= EXP:op aumento {:RESULT = new Aumento(op, opright, opleft);:}
+          |aumento EXP:op {:RESULT = new Preaumento(op, opright, opleft);:}       
+            ;
+DECREMENTO::= EXP:op decremento {:RESULT = new Decremento(op, opright, opleft);:}
+              |decremento EXP:op {:RESULT = new Predecremento(op, opright, opleft);:}
+;
+
+ACCESO::= ACCESO:origen punto ORIGEN:destino {: RESULT = new Acceso(origen, destino, origenright, origenleft);:}
+        | ORIGEN:exp {:RESULT = exp;:}        
+;
+
+ORIGEN::=
+          id:id {:RESULT = new Variable(id, idright, idleft);:}        
+        | ORIGEN:origen LEXP:coor {: RESULT = new AccesoVector(origen , coor , origenright, origenleft);:}
+        
+;
+
+TIPO::= PRIMITIVO:t{:RESULT = t;:}
+      | id:id {:RESULT = new Tipo(id,idright, idleft);:}
+;
+
+PRIMITIVO ::=   
+         tint:t {:RESULT = new Tipo(Tipo.TypePrimitive.INT,tright, tleft);:}
+		|tchar:t {:RESULT =  new Tipo(Tipo.TypePrimitive.CHAR,tright, tleft);:}
+        |tdouble:t {:RESULT = new Tipo(Tipo.TypePrimitive.DOUBLE,tright, tleft);:}
+		|tbool:t {:RESULT = new Tipo(Tipo.TypePrimitive.BOOL,tright, tleft);:}
+		/*|tstring:t {:RESULT = new Tipo(Tipo.TypePrimitive.STRING,tright, tleft);:}*/
+;
