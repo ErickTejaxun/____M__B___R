@@ -93,7 +93,7 @@ public class DeclaracionAtributo implements Instruccion
         {                       
             for(Dec d: declaraciones.declaraciones)
             {
-                declaraciones(entorno, d.id, d.valor, d.dimensiones);
+                declaraciones(entorno, d.id, d.valor, d.Sizedimensiones.size());
             }
             return null;
         }

@@ -168,7 +168,7 @@ public class NodoNario
         return hijos==null;
     }
     
-    public String getCadena()
+    public String getArrayComoCadena()
     {
         String cadena = "";
         if(isHoja())
@@ -187,11 +187,11 @@ public class NodoNario
             {
                 if(cadenaTemp.equals(""))
                 {
-                    cadenaTemp += hijo.getCadena();
+                    cadenaTemp += hijo.getArrayComoCadena();
                 }
                 else
                 {
-                    cadenaTemp += ","+hijo.getCadena();
+                    cadenaTemp += ","+hijo.getArrayComoCadena();
                 }
             }
             cadena += cadenaTemp;
@@ -200,6 +200,39 @@ public class NodoNario
         return cadena;
     }
 
+    public String getCadena()
+    {
+        String cadena = "";
+        if(isHoja())
+        {
+            if(valor==null)
+            {
+                return "nulo";
+            }            
+            return valor.toString();
+        }
+        else
+        {
+            cadena += "";
+            String cadenaTemp = "";
+            for(NodoNario hijo:hijos)
+            {
+                if(cadenaTemp.equals(""))
+                {
+                    cadenaTemp += hijo.getCadena();
+                }
+                else
+                {
+                    cadenaTemp += ""+hijo.getCadena();
+                }
+            }
+            cadena += cadenaTemp;
+            cadena += "";
+        }
+        return cadena;
+    }    
+    
+    
     public boolean setValor(ArrayList<Integer> l, int nivel, Object valor)
     {
         if(l.size()  == nivel)
@@ -234,12 +267,15 @@ public class NodoNario
         }        
         else
         {   
-            if(l.get(nivel)>hijos.size())
+            if(l.get(nivel)>=hijos.size())
             {            
-                Utilidades.Singlenton.registrarError("indice", "Error de desborde de índice de acceso al arreglo." , ErrorC.TipoError.SEMANTICO,
+                Utilidades.Singlenton.registrarError("indice", "Error de desborde de índice de acceso al arreglo. El máximo es: "+(hijos.size()-1) + " y se está solicitando el índice "
+                        +l.get(nivel)
+                        , ErrorC.TipoError.SEMANTICO,
                         Utilidades.Singlenton.linea, Utilidades.Singlenton.columna);  
                 return null;
             }
+
             NodoNario tmp = hijos.get(l.get(nivel));
             return tmp==null? null: tmp.getValor(l, nivel+1);
         }                

@@ -126,8 +126,7 @@ parser code
 terminal String tint, tdouble, tchar, tbool, tstring, puntocoma, llavei, llaved, pari, pard, id, corchetei, corcheted, igual, print, println, coma;
 terminal String igualigual, desigual, mayor, menor, menorigual, mayorigual, potencia , tvoid, nulo, tcomodin;
 terminal String abstracto, caso, cat, clase, defecto, hacer, extiende, final_, graph;
-terminal String importar, instanceof_, nuevo, privado, protegido, publico, retorno;
-terminal String arroba, sobrescrito;
+terminal String importar, instanceof_, nuevo, privado, protegido, publico, retorno, tcopi;
 
 /*Palabras reservadas :v*/
 terminal String tdefinir, tfusion, tconcatenar, tatexto, taentero, tadecimal, tpeso, treservar, teql, twrite, twriteend, tclose;
@@ -161,7 +160,9 @@ non terminal If IF, ELSE;
 non terminal Ternario TER;
 non terminal For FOR;
 non terminal Expresion ACTUALIZACION, EXPRETORNO;
-non terminal Integer NDIM;
+/*---------------> Dimensiones*/
+non terminal ArrayList<Expresion> NDIM, NDIMVACIO, NDIMVALOR;
+/*--------------->*/
 non terminal ArrayList<Expresion> LEXP, LVALORES;
 non terminal AsignacionVector ASIGV;
 non terminal NodoNario ITEM,LITEM,ARR;
@@ -190,8 +191,11 @@ non terminal ArrayList<Expresion> PARACTUALES,ACTUALES;
 /*non terminal ArrayList<Nodo> LDECATRIB;*/
 non terminal DeclaracionAtributo DECATRIB;
 
+non terminal Fusion FUSION, CUERPOFUSION, CUERPO ;
+
 /*Arreglos*/
 non terminal Expresion VALORARREGLO ;
+non terminal Copi COPI;
 non terminal Expresion ACCESO, ORIGEN;
 non terminal Expresion INSTANCIA;
 non terminal Expresion VALORASIGNACION;
@@ -236,10 +240,20 @@ LINST::= LINST:lista INST:inst {: lista.add(inst); RESULT = lista;:}
 	    |INST:inst {: ArrayList<Nodo> l = new ArrayList<Nodo>(); l.add(inst); RESULT = l;:} 
 ;
 
-INST::= PRINT:inst {: RESULT = inst;:}
+INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |DECLARACION:inst puntocoma {: RESULT = inst;:}
+       |ASIGV:inst puntocoma {: RESULT = inst;:}
+       |ASIG:inst puntocoma {: RESULT = inst;:}
+       |FUSION:inst puntocoma {: RESULT = inst;:}
+       |COPI:inst puntocoma {: RESULT = inst;:}
+       |error
 ;
 
+COPI::= tcopi:t pari EXP:origen coma EXP:destino pard 
+        {:
+        RESULT = new Copi(origen, destino, tright, tleft);
+        :}
+;        
 
 DECLARACION::= TIPO:t LDEC:lista {: RESULT = new Declaracion(t, lista, tright, tleft); :} ;
 
@@ -253,24 +267,72 @@ DEC::=
     | id:id NDIM:dim {: RESULT = new Dec(id,dim, idright, idleft);:}
     | id:id NDIM:dim igual VALORARREGLO:valor {: RESULT = new Dec(id,dim, valor, idright, idleft);:}
     | id:id NDIM:dim igual ARR:valor {: RESULT = new Dec(id,dim, new ExpresionArreglo(valor, valorright, valorleft), idright, idleft);:}
+    | id:id NDIM:dim igual EXP:valor 
+        {: 
+            if(valor instanceof Literal)
+            {
+                Literal valTmp = (Literal)valor;
+                if(valTmp.tipo.isString())
+                {
+                    /*Hay que pasar la cadena a una expresionArreglo */
+                    Arreglo tmpArreglo = new Arreglo();
+                    tmpArreglo.columna = valorright;
+                    tmpArreglo.linea = valorleft;            
+                    NodoNario raizArreglo = new NodoNario();
+                    tmpArreglo.raiz = raizArreglo;
+                    raizArreglo.hijos = new ArrayList<NodoNario>();
+                    raizArreglo.tipo = new Tipo(Tipo.TypePrimitive.CHAR);            
+                    char[] caracteres = valTmp.valor.toString().toCharArray();
+                    for(char caracter : caracteres)
+                    {
+                        NodoNario nuevoNodo = new NodoNario();
+                        nuevoNodo.tipo = tmpArreglo.tipo;
+                        nuevoNodo.valor = caracter;
+                        nuevoNodo.linea = valorright;
+                        nuevoNodo.columna = valorleft;
+                        raizArreglo.hijos.add(nuevoNodo);
+                    }
+
+                    RESULT = new Dec(id,dim, 
+                            new ExpresionArreglo(raizArreglo, valorright, valorleft)
+                            ,idright,
+                            idleft);
+                }
+                else
+                {
+                    RESULT = new Dec(id,dim, valor, idright, idleft);
+                }
+            }
+            else
+            {
+                RESULT = new Dec(id,dim, valor, idright, idleft);
+            }
+        :}
 ;   
 
 /*Dimensiones*/
-NDIM::= NDIM:n corchetei corcheted                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           corcheted {:RESULT = n+1;:}
-        |corchetei corcheted {: RESULT = 1;:}
+
+NDIM ::=  NDIMVACIO:v {:RESULT =v; :}
+        | NDIMVALOR:v {:RESULT =v; :}
+;
+
+
+
+NDIMVACIO::= 
+          NDIMVACIO:n corchetei corcheted {:RESULT = n ; n.add(null);:}
+        |corchetei corcheted {: RESULT = new ArrayList<Expresion>(); RESULT.add(null);:}
 ;  
 
+NDIMVALOR::= 
+         NDIMVALOR:n corchetei EXP:valor corcheted {:RESULT = n ; n.add(valor);:}
+        |corchetei EXP:valor corcheted {: RESULT = new ArrayList<Expresion>(); RESULT.add(valor);:}
+; 
 
 VALORARREGLO::=
           llavei LEXP:l  llaved {: RESULT = new ExpresionArreglo(l,lright,lleft);:}
         /*|nuevo:n id:tipo LEXP:l {: RESULT = new ExpresionArreglo(new Tipo(tipo), l,nright,nleft);:}*/
 ;
 
-VALORASIGNACION::= 
-            EXP:exp {:RESULT = exp;:}
-          /*|  INSTANCIA:exp  {:RESULT = exp;:}*/
-          /*| nulo:r {:RESULT = new Literal(new Tipo(Tipo.TypePrimitive.NULO), null, rright, rleft);:}*/
-;
 
 ARR::= llavei LITEM:nodo llaved {: RESULT = nodo;:}
 ;
@@ -283,15 +345,43 @@ ITEM::= EXP:exp {: RESULT = new NodoNario(exp);:}
         |ARR:exp {: RESULT = exp;:} 
 ;
 
+ASIG::= ACCESO:origen igual VALORASIGNACION:valor   {: RESULT = new Asignacion(origen , valor, origenright, origenleft);:}       
+       
+;
 
-PRINT::= print:p pari cadena:v pard puntocoma 
+ASIGV::= id:id LEXP:coordenas igual EXP:valor {: RESULT = new AsignacionVector(id, coordenas, valor,  idright,idleft);:}
+;
+
+
+VALORASIGNACION::= 
+            EXP:exp {:RESULT = exp;:}
+         |  INSTANCIA:exp  {:RESULT = exp;:}         
+;
+
+
+INSTANCIA::=          
+        /*nuevo:n TIPO:tipo pari PARACTUALES:lista pard {: RESULT = new Instancia(tipo, lista, nright, nleft);:}*/
+        treservar:n pari EXP:valor pard {: RESULT = new Instancia(valor, nright, nleft); :}
+;
+
+/*Lista de parametros actuales para llamadas a funciones*/
+PARACTUALES::= ACTUALES:l{:RESULT = l;:}
+            | {:RESULT = new ArrayList<Expresion>();:}
+;            
+ACTUALES::= ACTUALES:l coma EXP:exp {:l.add(exp);RESULT = l;:}
+              |EXP:exp {:ArrayList<Expresion> l = new ArrayList<Expresion>(); l.add(exp); RESULT = l ;:}
+;
+
+
+
+PRINT::= print:p pari cadena:v pard  
         {: 
             RESULT = new Imprimir(
                     new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft), 
                     pright,
                     pleft);  
         :}
-        |print:p pari cadena:v coma LVALORES:l pard puntocoma 
+        |print:p pari cadena:v coma LVALORES:l pard  
         {: 
             RESULT = new Imprimir(
                     new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft), 
@@ -348,7 +438,8 @@ EXP::=
         |ACCESO:v {:RESULT = v;:}
         |pari EXP:op pard {: RESULT = op;:}
         /*|EXPLICITCAST:exp {:RESULT = exp;:}*/
-        | nulo:r {:RESULT = new Literal(new Tipo(Tipo.TypePrimitive.NULO), null, rright, rleft);:}       
+        | nulo:r {:RESULT = new Literal(new Tipo(Tipo.TypePrimitive.NULO), null, rright, rleft);:} 
+        | tpeso:t pari id:nombre pard {: RESULT = new Peso(nombre,tright, tleft );:}
 ;
 
 AUMENTO::= EXP:op aumento {:RESULT = new Aumento(op, opright, opleft);:}
@@ -378,4 +469,41 @@ PRIMITIVO ::=
         |tdouble:t {:RESULT = new Tipo(Tipo.TypePrimitive.DOUBLE,tright, tleft);:}
 		|tbool:t {:RESULT = new Tipo(Tipo.TypePrimitive.BOOL,tright, tleft);:}
 		/*|tstring:t {:RESULT = new Tipo(Tipo.TypePrimitive.STRING,tright, tleft);:}*/
+;
+
+
+
+FUSION::= tfusion id:nombre llavei CUERPO:clase llaved 
+            {:                
+                clase.setId(nombre);                
+                RESULT = clase;
+            :}
+        | tfusion id:nombre llavei llaved 
+            {:      
+                RESULT = new Fusion();
+                RESULT.setId(nombre);                                
+            :}            
+;            
+
+CUERPO::=              
+          CUERPO:clase DECATRIB:f puntocoma 
+            {: 
+                clase.addAtributo(f); 
+                RESULT = clase;
+            :}
+        | DECATRIB:atributos puntocoma
+            {:
+                Fusion c = new Fusion(atributosright,atributosleft); 
+                c.addAtributo(atributos); 
+                RESULT = c;
+            :}
+;
+
+DECATRIB::= TIPO:tipo LDEC:declaraciones
+            {: 
+                Declaracion d  = new Declaracion(tipo,declaraciones,tiporight,tipoleft);     
+                ArrayList<String> l = new ArrayList<String>();
+                l.add("public");
+                RESULT = new DeclaracionAtributo(l, d.tipo, d, tiporight,tipoleft); 
+            :}             
 ;

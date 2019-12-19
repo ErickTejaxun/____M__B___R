@@ -5,6 +5,7 @@
  */
 package AST.Instruccion;
 
+import AST.Clase.Instancia;
 import AST.Clase.Objeto;
 import AST.Entorno.Simbolo;
 import AST.Expresion.Expresion;
@@ -13,6 +14,8 @@ import AST.Entorno.Tipo;
 import static AST.Entorno.Tipo.TypePrimitive.CHAR;
 import AST.Expresion.Arreglo.Arreglo;
 import AST.Expresion.Arreglo.ExpresionArreglo;
+import AST.Expresion.Arreglo.NodoNario;
+import AST.Expresion.Literal;
 import Utilidades.ErrorC;
 import java.util.ArrayList;
 
@@ -83,7 +86,7 @@ public class Declaracion implements Instruccion
         {
             for(Dec d:declaraciones)
             {
-                declaraciones(entorno, d.id, d.valor, d.dimensiones);
+                declaraciones(entorno, d.id, d.valor, d.Sizedimensiones);
             }
             return null;
         }
@@ -94,12 +97,19 @@ public class Declaracion implements Instruccion
     }
 
     
-    public Object declaraciones(Entorno entorno, String id, Expresion expresion, int dimensiones)
+    
+    public Object declaraciones(Entorno entorno, String id, Expresion expresion, ArrayList<Expresion> dimensiones)
     {        
         Object valor = null;
         /*Verificamos si se le ha asignado un valor inicial.*/
         if(expresion!=null)
-        {
+        {                                   
+            if(expresion instanceof Instancia)
+            {
+                Instancia e = (Instancia)expresion;
+                e.setTipo(tipo);
+            }
+            
             if(expresion instanceof ExpresionArreglo)
             {
                 if(((ExpresionArreglo)expresion).tipo == null)
@@ -181,7 +191,7 @@ public class Declaracion implements Instruccion
         }  
         /*Si no se le asigna un valor de inicio, hay que inicializar */
         else
-        if(dimensiones ==0)
+        if(dimensiones.size() ==0)
         {                            
             switch(this.tipo.typeprimitive)
             {
@@ -207,11 +217,12 @@ public class Declaracion implements Instruccion
         {
             Arreglo arregloTmp = (Arreglo)valor;
             System.out.println(arregloTmp.getCadena());
-            if(arregloTmp.tamaniosDimensiones.size() != dimensiones)
+            if(arregloTmp.tamaniosDimensiones.size() != dimensiones.size())
             {
                 Utilidades.Singlenton.registrarError(id, "No coincide el número de las dimensiones del valor a asignar", ErrorC.TipoError.SEMANTICO,linea, columna);
                 return this;
-            }            
+            }   
+            /*Ahora verificamos que el valor coinicida con lo enviado.*/            
         }
         
         /*Verificamos que sean del mismo tipo*/
@@ -237,16 +248,84 @@ public class Declaracion implements Instruccion
             /*Coincidieron los tipos.*/            
         }
         
-        
-        Simbolo s = this.dimensiones == 0 ? new Simbolo(tipo,id,valor,linea,columna):new Simbolo(tipo,id,valor,dimensiones ,linea,columna);
-        if(!entorno.insertar(s))
+        /*Aquí vamos a ver si el arreglo está vacio.
+        Tenemos que ver que los arreglos estén llenos.                
+        */
+        /*-----------------------------------------------------------------------------------DECLARACION DE ARREGLOS--------------*/
+        if(dimensiones!=null && valor==null)
         {
-            //System.out.println("Error, variable " +s.id + " ya declarada.");
+            if(dimensiones.size() != 0)
+            {
+                /*Aquí deberíamos */
+                Expresion tmp = new ExpresionArreglo(tipo,dimensiones,linea,columna);
+                valor = tmp.getValor(entorno);
+                Simbolo s = this.dimensiones == 0 ? 
+                    new Simbolo(tipo,id,valor,linea,columna):
+                    new Simbolo(tipo,id,valor,dimensiones.size() ,linea,columna);            
+                entorno.insertar(s);
+            } 
+            else // en este caso es una declaración de una estructura con valor nulo (a huevos, solo es declaración). 
+            {
+                Simbolo s = new Simbolo(tipo,id,valor,linea,columna);
+                entorno.insertar(s);
+            }
+        }
+        else
+        {
+            /*Verificamos los tamaños de cada una de las dimensiones*/
+            if(dimensiones.size() == 0)
+            {
+                entorno.insertar(new Simbolo(tipo,id,valor,linea,columna));
+            }
+            else
+            {
+                Arreglo arrTmp = (Arreglo)valor;
+                NodoNario nodoTmp = arrTmp.raiz;                
+                for(int x = 0 ; x < dimensiones.size(); x++)
+                {
+                    Expresion valorDimension = dimensiones.get(x);
+                    if(valorDimension == null){break;}
+                    Object tmp = valorDimension.getValor(entorno);
+                    Tipo tipoTmp = valorDimension.getTipo();
+                    if(!tipoTmp.isNumeric())
+                    {
+                        Utilidades.Singlenton.registrarErrorSemantico("Dimensión " +x,"Debe contener un valor ", linea, columna);
+                        return null;
+                    }
+                    int tamañoDimension = tipoTmp.isInt()? (int)tmp : tipoTmp.isDouble()? (int)(double)tmp: (char)tmp;
+                    /*Ahora verificamos que sean del mismo tamaño*/
+                    
+                    if(tamañoDimension < nodoTmp.hijos.size())
+                    {                        
+                        Utilidades.Singlenton.registrarErrorSemantico("Advertencia: "+id+": Dimensión "+x, "No coinciden los tamaños de las dimensiones con el valor a asignar.", linea, columna);                                                
+                        ArrayList<NodoNario> listaNueva = new ArrayList<NodoNario>();
+                        for(int y = 0; y< tamañoDimension; y++)
+                        {                                                 
+                            listaNueva.add(nodoTmp.hijos.get(y));
+                        }
+                        nodoTmp.hijos = listaNueva;
+                    }
+                    if(tamañoDimension > nodoTmp.hijos.size())
+                    {                        
+                        Utilidades.Singlenton.registrarErrorSemantico("Advertencia: "+id+": Dimensión "+x, "No coinciden los tamaños de las dimensiones con el valor a asignar.", linea, columna);                                                
+                        ArrayList<NodoNario> listaNueva = new ArrayList<NodoNario>();
+                        for(int y = 0; y< tamañoDimension; y++)
+                        {                                                 
+                            listaNueva.add(nodoTmp.hijos.get(y));
+                        }
+                        nodoTmp.hijos = listaNueva;
+                    }                    
+                    nodoTmp = nodoTmp.hijos.get(0);                    
+                }
+                
+                /*Verificamos lo los números de elementos de las dimensiones.*/                
+                entorno.insertar(new Simbolo(tipo,id,valor,0 ,linea,columna));
+            }                                                    
         }
         return this;
             
-    }
-    
+    }    
+       
     @Override
     public int linea() {
         return linea;
@@ -256,5 +335,29 @@ public class Declaracion implements Instruccion
     public int columna() {
         return columna;
     }
+    
+    public Arreglo generarArregloAtravesDeCadena(int valorright, int valorleft, String cadena,Entorno entorno)
+    {
+        Arreglo tmpArreglo = new Arreglo();
+        tmpArreglo.columna = valorright;
+        tmpArreglo.linea = valorleft;            
+        NodoNario raizArreglo = new NodoNario();
+        tmpArreglo.raiz = raizArreglo;
+        raizArreglo.hijos = new ArrayList<NodoNario>();
+        raizArreglo.tipo = new Tipo(Tipo.TypePrimitive.CHAR);            
+        char[] caracteres = cadena.toCharArray();
+        for(char caracter : caracteres)
+        {
+            NodoNario nuevoNodo = new NodoNario();
+            nuevoNodo.tipo = tmpArreglo.tipo;
+            nuevoNodo.valor = caracter;
+            nuevoNodo.linea = valorright;
+            nuevoNodo.columna = valorleft;
+            raizArreglo.hijos.add(nuevoNodo);
+        }
+        ExpresionArreglo tmp = new ExpresionArreglo(raizArreglo, valorright, valorleft);
+        return  (Arreglo)tmp.getValor(entorno);                
+    }
+    
     
 }

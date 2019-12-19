@@ -161,7 +161,7 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "false" {return new Symbol(sym.booleano,yychar, yyline, false);}
 "ent"   {return new Symbol(sym.tint, yychar, yyline, yytext());}
 "dec"   {return new Symbol(sym.tdouble, yychar, yyline, yytext());}        
-"char"  {return new Symbol(sym.tchar, yychar, yyline, yytext());}
+"chr"  {return new Symbol(sym.tchar, yychar, yyline, yytext());}
 "bul"   {return new Symbol(sym.tbool, yychar, yyline, yytext());} 
 "nlo"  {return new Symbol(sym.nulo, yychar, yyline, yytext());}
 "#"     {return new Symbol(sym.tcomodin, yychar, yyline, yytext());}
@@ -169,6 +169,7 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "importar" {return new Symbol(sym.importar, yychar, yyline, yytext());}
 "fusion"   {return new Symbol(sym.tfusion, yychar, yyline, yytext());}
 "_imp"  {return new Symbol(sym.print, yychar, yyline, yytext());}
+"_copi"  {return new Symbol(sym.tcopi, yychar, yyline, yytext());}
 "zro"  {return new Symbol(sym.tvoid, yychar, yyline, yytext());}
 "_concat"  {return new Symbol(sym.tconcatenar, yychar, yyline, yytext());}
 "_atxt"  {return new Symbol(sym.tatexto, yychar, yyline, yytext());}
@@ -196,6 +197,7 @@ sinosi={sino}({comentario}|{espacio})*(si)
 /*Palabras reservadas*/
 ";"   {return new Symbol(sym.puntocoma, yychar, yyline, yytext());}
 ","   {return new Symbol(sym.coma, yychar, yyline, yytext());}
+"."   {return new Symbol(sym.punto, yychar, yyline, yytext());}
 "=="  {return new Symbol(sym.igualigual, yychar, yyline, yytext());}
 "<>"  {return new Symbol(sym.desigual, yychar, yyline, yytext());}
 "<="  {return new Symbol(sym.menorigual, yychar, yyline, yytext());}

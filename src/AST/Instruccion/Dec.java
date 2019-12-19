@@ -6,6 +6,7 @@
 package AST.Instruccion;
 
 import AST.Expresion.Expresion;
+import java.util.ArrayList;
 
 /**
  *
@@ -15,6 +16,7 @@ public class Dec
 {
     public String id;
     public int dimensiones;
+    public ArrayList<Expresion> Sizedimensiones  = new ArrayList<Expresion>();
     public Expresion valor;
     public int linea, columna;
     public Dec(String i , int l, int c)
@@ -23,6 +25,7 @@ public class Dec
         this.dimensiones=0;
         this.linea = l;
         this.columna = c;
+        this.Sizedimensiones  = new ArrayList<Expresion>();
         
     }
     public Dec(String i, int d, int l, int c)
@@ -33,6 +36,24 @@ public class Dec
         this.columna = c;        
     }
     
+    public Dec(String i, ArrayList<Expresion> l, Expresion e, int linea, int col)
+    {
+        this.id = i;
+        this.Sizedimensiones = l;
+        this.linea = linea;
+        this.columna = col;
+        this.valor = e;
+    }
+    
+    public Dec(String i, ArrayList<Expresion> l,  int linea, int col)
+    {
+        this.id = i;
+        this.Sizedimensiones = l;
+        this.linea = linea;
+        this.columna = col;
+        //this.valor = e;
+    }    
+        
     public Dec(String i, Expresion e, int l, int c)
     {
         this.id = i;

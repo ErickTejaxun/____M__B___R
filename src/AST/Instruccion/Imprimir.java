@@ -10,7 +10,6 @@ import AST.Entorno.Tipo;
 import AST.Expresion.Arreglo.Arreglo;
 import AST.Expresion.Expresion;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  *
@@ -231,6 +230,20 @@ public class Imprimir implements Instruccion
                                     if(tipo.isString())
                                     {
                                         cadena += valor;
+                                    }
+                                    else
+                                    if(tipo.isChar())
+                                    {
+                                        if(valor instanceof Arreglo)
+                                        {
+                                            Arreglo arregloConCadena = (Arreglo)valor;
+                                            /*String nuevaCadenaAImprimir = "";
+                                            for(NodoNario nodo : arregloConCadena.raiz.hijos)                                                
+                                            {
+                                                nuevaCadenaAImprimir += nodo.valor;
+                                            }*/
+                                            cadena += arregloConCadena.raiz.getCadena();
+                                        }
                                     }
                                     else
                                     {

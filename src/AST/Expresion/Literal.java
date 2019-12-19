@@ -12,8 +12,8 @@ import AST.Entorno.Tipo;
  */
 public class Literal implements Expresion
 {
-    Object valor;
-    Tipo tipo;
+    public Object valor;
+    public Tipo tipo;
     public int linea, columna;
 
     public Literal(Tipo t, Object v, int l, int c)

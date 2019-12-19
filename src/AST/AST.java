@@ -5,7 +5,6 @@
  */
 package AST;
 
-import AST.Clase.Clase;
 import AST.Expresion.Funcion.Retorno;
 import AST.Entorno.Entorno;
 import AST.Entorno.Simbolo;
@@ -80,14 +79,13 @@ public class AST
             Entorno local = new Entorno(entorno.getGlobalClase(),entorno.ventana);
             Object clave = item.nextElement();            
             Simbolo simbolo = entorno.obtener(clave.toString());
-            if(simbolo.rol ==CLASE)
+            if(simbolo.rol ==METODO)
             {
-                Clase actual = (Clase)simbolo;
-                if(actual.existePrincipal())
+                Funcion actual = (Funcion)simbolo;
+                if(actual.isPrincipal())
                 {
-                    actual.getValor(local);
-                    break;
-                }                
+                    actual.ejectuar(entorno);
+                }
             }            
         }                           
         return null;

@@ -21,24 +21,26 @@ import java.util.ArrayList;
  */
 public class Instancia implements Expresion
 {
-    public Tipo tipo;
-    public ArrayList<Expresion> parametrosActuales;    
+    public Expresion size;     
     public int linea, columna;
+    public Tipo tipo;
+    public String idStruct="";
     
-    public Instancia(Tipo t, ArrayList<Expresion> lp, int l, int c)
+    public void setTipo(Tipo t)
     {
         this.tipo = t;
-        this.parametrosActuales = lp;
-        this.linea = l;
-        this.columna = c;
     }
     
-    public Instancia(Tipo t, int l, int c)
+    public void setNombre(String t)
     {
-        this.tipo = t;
-        this.parametrosActuales = new ArrayList<>();
+        this.idStruct = t;
+    }
+    
+    public Instancia(Expresion s, int l, int c)
+    {                
         this.linea = l;
         this.columna = c;
+        this.size = s;
     }        
     
     @Override
@@ -51,10 +53,47 @@ public class Instancia implements Expresion
             Utilidades.Singlenton.registrarError(this.tipo.nombreTipo(),"No se ha encontrado la clase.", ErrorC.TipoError.SEMANTICO, linea, columna);
             return null;
         }
-        /*Verificamos que sea una clase*/
-        if(sim instanceof Clase)
+        if(sim.rol != Simbolo.Rol.CLASE)
         {
-            Clase clase = (Clase)sim;
+            Utilidades.Singlenton.registrarErrorSemantico(tipo.nombreTipo(),"No se ha encontrado la clase.", linea, columna);
+            return null;            
+        }
+        Object valor = size.getValor(entorno);
+        Tipo tipoTmp = size.getTipo();
+        if(!tipoTmp.isNumeric())
+        {
+            Utilidades.Singlenton.registrarErrorSemantico("_reservar","El argumento debe ser de tipo numerico.", linea, columna);
+            return null;              
+        }
+        Fusion simboloF = (Fusion)sim;
+        switch(tipoTmp.typeprimitive)
+        {
+            case INT:
+                if((int)valor < simboloF.listaAtributos.size())
+                {
+                    Utilidades.Singlenton.registrarErrorSemantico("_reservar","El tamaño solicitado es menor al tamaño de la estructura "+simboloF.id, linea, columna);
+                    return null;                     
+                }
+                break;
+            case DOUBLE:
+                if((double)valor < simboloF.listaAtributos.size())
+                {
+                    Utilidades.Singlenton.registrarErrorSemantico("_reservar","El tamaño solicitado es menor al tamaño de la estructura "+simboloF.id, linea, columna);
+                    return null;                     
+                }                
+                break;
+            case CHAR:
+                if((char)valor < simboloF.listaAtributos.size())
+                {
+                    Utilidades.Singlenton.registrarErrorSemantico("_reservar","El tamaño solicitado es menor al tamaño de la estructura "+simboloF.id, linea, columna);
+                    return null;                     
+                }                
+                break;
+        }        
+        /*Verificamos que sea una clase*/
+        if(sim instanceof Fusion)
+        {
+            Fusion clase = (Fusion)sim;
             clase.entornoClase = new Entorno(entorno.getGlobalClase(),entorno.ventana);
             clase.getValor(clase.entornoClase);
             Objeto nuevaInstancia = new Objeto();
@@ -62,47 +101,13 @@ public class Instancia implements Expresion
             nuevaInstancia.setClaseOrigen(this.tipo.nombreTipo());
             nuevaInstancia.linea = this.linea;
             nuevaInstancia.columna = this.columna;
-            nuevaInstancia.listaClaseMiembros = (ArrayList<Objeto>) clase.listaClaseMiembros.clone();
-            nuevaInstancia.listaModificadores = (ArrayList<String>) clase.modificadores.clone();
             nuevaInstancia.valor = nuevaInstancia;
             nuevaInstancia.tipo = new Tipo(clase.id);
             
             /*Ahora buscamos el contrusctor, si no hay constructor, mandamos un null ;) */
             String firma = clase.id;
             ArrayList<Object> resultados = new ArrayList<>();
-            ArrayList<Tipo> tipos = new ArrayList<>()  ;         
-            for(Expresion e:parametrosActuales)
-            {
-                if(e instanceof Variable)
-                {
-                    Variable var = (Variable)e;
-                    if(entorno.obtener(var.id)==null)
-                    {
-                        Utilidades.Singlenton.registrarError(var.id, "Variable no declarada" , ErrorC.TipoError.SEMANTICO, var.linea, var.columna);
-                        return null;
-                    }
-                    else
-                    {
-                        Object tmp = e.getValor(entorno); 
-                        if(tmp!=null)
-                        {
-                            firma +="$"+e.getTipo().nombreTipo().toLowerCase();
-                            resultados.add(tmp);
-                        }                     
-                    }
-
-                }            
-                else
-                {
-                    Object tmp = e.getValor(entorno); 
-                    if(tmp!=null)
-                    {
-                        firma +="$"+e.getTipo().nombreTipo().toLowerCase();
-                        resultados.add(tmp);
-                    }                    
-                }
-
-            }      
+            ArrayList<Tipo> tipos = new ArrayList<>()  ;              
             /*Buscamos la función*/            
             Simbolo sfuncion = nuevaInstancia.entornoObjeto.obtener(firma);
             if(sfuncion==null)

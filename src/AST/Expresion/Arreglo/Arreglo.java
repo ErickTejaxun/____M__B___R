@@ -19,6 +19,11 @@ public class Arreglo
     public ArrayList<Integer> tamaniosDimensiones;
     public int linea, columna;
     
+    public Arreglo()
+    {
+        
+    }
+    
     public Arreglo(ArrayList<Integer> l , Tipo t)
     {
         this.tamaniosDimensiones = l;
@@ -38,7 +43,7 @@ public class Arreglo
         
     public String getCadena()
     {
-        return raiz.getCadena();
+        return raiz.getArrayComoCadena();
     }
     
     public Object getValor(ArrayList<Integer> l)

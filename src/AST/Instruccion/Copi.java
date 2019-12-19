@@ -10,29 +10,34 @@ import AST.Clase.Objeto;
 import AST.Entorno.Simbolo;
 import AST.Expresion.Expresion;
 import AST.Entorno.Entorno;
+import AST.Entorno.Tipo;
 import static AST.Entorno.Tipo.TypePrimitive.*;
+import AST.Expresion.Arreglo.Arreglo;
+import AST.Expresion.Arreglo.ExpresionArreglo;
+import AST.Expresion.Arreglo.NodoNario;
 import AST.Expresion.Variable;
 import Utilidades.ErrorC;
+import java.util.ArrayList;
 
 /**
  *
  * @author erick
  */
-public class Asignacion implements Instruccion
+public class Copi implements Instruccion
 {    
     public String id;
     public Expresion expresion;
     public int linea, columna;
     public Expresion destino;
     
-    public Asignacion(String id, int l,int c)
+    public Copi(String id, int l,int c)
     {        
         this.id = id;
         this.linea = l;
         this.columna = c;
     }
     
-    public Asignacion(String id, Expresion e, int l, int c)
+    public Copi(String id, Expresion e, int l, int c)
     {        
         this.id = id;
         this.expresion = e;
@@ -40,7 +45,7 @@ public class Asignacion implements Instruccion
         this.columna = c;        
     }
         
-    public Asignacion(Expresion or, Expresion e, int l, int c)
+    public Copi(Expresion or, Expresion e, int l, int c)
     {        
         this.destino = or;
         this.expresion = e;
@@ -115,65 +120,15 @@ public class Asignacion implements Instruccion
                 switch(simbolo.tipo.typeprimitive)
                 {
                     case CHAR:
-                        if(!expresion.getTipo().isChar())
+                        if(expresion.getTipo().isString())
                         {
-                           if(expresion.getTipo().isString())
-                           {
-                                Utilidades.Singlenton.registrarErrorSemantico("Error asignación", "Debe utilizar la función _copi() para copiar arreglos de caracters",linea, columna);
-                                return null;                               
-                           }
-                            Utilidades.Singlenton.registrarError(Utilidades.Singlenton.nombreVariable, "No se le puede asignar un valor de tipo "+ expresion.getTipo().nombreTipo() +" a un tipo "+simbolo.tipo.nombreTipo(), ErrorC.TipoError.SEMANTICO,linea, columna);
-                            return null;                           
+                          simbolo.valor= generarArregloAtravesDeCadena(linea, columna, valor.toString(), entorno);                                                       
                         }
-                    break;
-                    case INT:   
-                        switch(expresion.getTipo().typeprimitive)
-                        {
-                            case DOUBLE:
-                                if((double)valor >= Utilidades.Singlenton.maxInt)
-                                {
-                                    Utilidades.Singlenton.registrarErrorSemantico(valor.toString(),"El valor supera el valor máximo para un contenedor int.", linea, columna);
-                                    return null;
-                                }
-                                if((double)valor <= Utilidades.Singlenton.minInt)
-                                {
-                                    Utilidades.Singlenton.registrarErrorSemantico(valor.toString(),"El valor es menor al valor mínimo para un contenedor int.", linea, columna);
-                                    return null;
-                                }                                
-                                valor = (int)((double)valor);
-                                break;
-                            case CHAR:
-                                valor =(char)valor+0;
-                                break;
-                            default:
-                                Utilidades.Singlenton.registrarError(Utilidades.Singlenton.nombreVariable, "No se le puede asignar un valor de tipo "+ expresion.getTipo().nombreTipo() +" a un tipo "+simbolo.tipo.nombreTipo(), ErrorC.TipoError.SEMANTICO,linea, columna);
-                                return null; 
-                        }
-                    break;
-                    case DOUBLE:
-                        switch(expresion.getTipo().typeprimitive)
-                        {
-                            case CHAR:
-                                valor =(char)valor+0.0;
-                                break;
-                            case INT:
-                                valor = (double) (int)valor;
-                                break;
-                            default:
-                                Utilidades.Singlenton.registrarError(Utilidades.Singlenton.nombreVariable, "No se le puede asignar un valor de tipo "+ expresion.getTipo().nombreTipo() +" a un tipo "+simbolo.tipo.nombreTipo(), ErrorC.TipoError.SEMANTICO,linea, columna);
-                                return null;                                
-                        }                        
-                    break;   
-                    default:
-                        if(!expresion.getTipo().nombreTipo().equals(simbolo.tipo.nombreTipo()))
-                        {
-                            if(!expresion.getTipo().nombreTipo().equals("NULO"))
-                            {
-                                Utilidades.Singlenton.registrarError(Utilidades.Singlenton.nombreVariable, "No se le puede asignar un valor de tipo "+ expresion.getTipo().nombreTipo() +" a un tipo " + simbolo.tipo.nombreTipo(), ErrorC.TipoError.SEMANTICO,linea, columna);
-                                return null;
-                            }                                                                                
-                        }                    
-                    break;                                                         
+//                         Utilidades.Singlenton.registrarError(Utilidades.Singlenton.nombreVariable, "No se le puede asignar un valor de tipo "+ expresion.getTipo().nombreTipo() +" a un tipo "+simbolo.tipo.nombreTipo(), ErrorC.TipoError.SEMANTICO,linea, columna);
+//                         return null;                      
+                    default:                                
+                                Utilidades.Singlenton.registrarErrorSemantico(id, "Función _copi() solo permite copiar caracteres. Tipo del valor:"+simbolo.tipo.nombreTipo(), linea, linea);
+                                return null;                                                                           
                 }                 
             }  
         }  
@@ -219,5 +174,29 @@ public class Asignacion implements Instruccion
     public int columna() {
         return columna;
     }
+    
+    
+    public Arreglo generarArregloAtravesDeCadena(int valorright, int valorleft, String cadena,Entorno entorno)
+    {
+        Arreglo tmpArreglo = new Arreglo();
+        tmpArreglo.columna = valorright;
+        tmpArreglo.linea = valorleft;            
+        NodoNario raizArreglo = new NodoNario();
+        tmpArreglo.raiz = raizArreglo;
+        raizArreglo.hijos = new ArrayList<NodoNario>();
+        raizArreglo.tipo = new Tipo(Tipo.TypePrimitive.CHAR);            
+        char[] caracteres = cadena.toCharArray();
+        for(char caracter : caracteres)
+        {
+            NodoNario nuevoNodo = new NodoNario();
+            nuevoNodo.tipo = tmpArreglo.tipo;
+            nuevoNodo.valor = caracter;
+            nuevoNodo.linea = valorright;
+            nuevoNodo.columna = valorleft;
+            raizArreglo.hijos.add(nuevoNodo);
+        }
+        ExpresionArreglo tmp = new ExpresionArreglo(raizArreglo, valorright, valorleft);
+        return  (Arreglo)tmp.getValor(entorno);                
+    }    
     
 }

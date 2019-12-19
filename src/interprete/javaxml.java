@@ -17,29 +17,29 @@ public class javaxml extends AbstractTokenMaker
     {
         TokenMap tokenMap = new TokenMap();
 
-        tokenMap.put("funcion", RESERVED_WORD);
-        tokenMap.put("retornar", RESERVED_WORD);
+        tokenMap.put("zro", RESERVED_WORD);
+        tokenMap.put("ent", RESERVED_WORD);
+        tokenMap.put("chr", RESERVED_WORD);
+        tokenMap.put("dec", RESERVED_WORD);
+        tokenMap.put("bul", RESERVED_WORD);
+        tokenMap.put("if", RESERVED_WORD);
+        tokenMap.put("case", RESERVED_WORD);
+        tokenMap.put("default", RESERVED_WORD);
+        tokenMap.put("romper", RESERVED_WORD);
+        tokenMap.put("siga", RESERVED_WORD);
+        tokenMap.put("definir", RESERVED_WORD);
+        tokenMap.put("fusion", RESERVED_WORD);
         tokenMap.put("importar", RESERVED_WORD);
-        tokenMap.put("detener", RESERVED_WORD);
-        tokenMap.put("selecciona", RESERVED_WORD);
-        tokenMap.put("caso", RESERVED_WORD);
-        tokenMap.put("defecto", RESERVED_WORD);
-        tokenMap.put("sino", RESERVED_WORD);
-        tokenMap.put("sino{", RESERVED_WORD);
-        tokenMap.put("}sino{", RESERVED_WORD);
-        tokenMap.put("si", RESERVED_WORD);
-        tokenMap.put("Si", RESERVED_WORD);
-        tokenMap.put("SI", RESERVED_WORD);
-        tokenMap.put("Var", RESERVED_WORD);
-        tokenMap.put("VAR", RESERVED_WORD);
-        
-        tokenMap.put("imprimir", RESERVED_WORD);
-        tokenMap.put("imprimir(", RESERVED_WORD);
-        tokenMap.put("Imprimir(", RESERVED_WORD);
-        tokenMap.put("Imprimir", RESERVED_WORD);
-        tokenMap.put("var", RESERVED_WORD);
-        tokenMap.put("nulo", RESERVED_WORD);
-        tokenMap.put(".alclic", RESERVED_WORD);
+        tokenMap.put("regresar", RESERVED_WORD);
+        tokenMap.put("when", RESERVED_WORD);                
+        tokenMap.put("_imp(", RESERVED_WORD);
+        tokenMap.put("_copi(", RESERVED_WORD);
+        tokenMap.put("_reservar(", RESERVED_WORD);
+        tokenMap.put("_pesode", RESERVED_WORD);
+        tokenMap.put("nlo", RESERVED_WORD);
+        tokenMap.put("ent", RESERVED_WORD);
+        tokenMap.put("dec", RESERVED_WORD);
+        tokenMap.put("bul", RESERVED_WORD);        
         return tokenMap;
     }
 
@@ -282,9 +282,7 @@ public class javaxml extends AbstractTokenMaker
             default:
                 addToken(text, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
                 addNullToken();
-
         }
-
         // Return the first token in our linked list.
         return firstToken;
 

@@ -967,7 +967,7 @@ public class Interfaz extends javax.swing.JFrame implements Runnable{
             JPanel panel = new JPanel();
             panel.setLayout(new java.awt.BorderLayout());
             RSyntaxTextArea editor = new RSyntaxTextArea(30,60);
-            editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
+            editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);           
             editor.setCodeFoldingEnabled(true);            
             RTextScrollPane sp = new RTextScrollPane(editor);            
             sp.setIconRowHeaderEnabled(true);
@@ -983,12 +983,20 @@ public class Interfaz extends javax.swing.JFrame implements Runnable{
             contenedorPaneles.add("Nuevo-"+contadorNuevos, panel);                        
             agregarArbolGrafico("Nuevo-"+contadorNuevos);
             contadorNuevos++;            
+            SyntaxScheme scheme = editor.getSyntaxScheme();
+            scheme.getStyle(Token.RESERVED_WORD).background = Color.pink;
+            scheme.getStyle(Token.LITERAL_STRING_DOUBLE_QUOTE).underline = true;
+            editor.revalidate();
 
     }
     
     
     public void AbrirDesdeArbolnuevoArchivoConData(String nombre, String pathArchivo)
     {        
+        
+            AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory)TokenMakerFactory.getDefaultInstance();
+            atmf.putMapping("text/MBR", "interprete.javaxml");        
+            
             String contenido = obtenerDataArchivo(pathArchivo);
             if(contenido==null)
             { 
@@ -999,22 +1007,63 @@ public class Interfaz extends javax.swing.JFrame implements Runnable{
             panel.setLayout(new java.awt.BorderLayout());
             RSyntaxTextArea editor = new RSyntaxTextArea(30,60);              
             tablaEditores.put(nombre, editor);
-            editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_YAML);
+            editor.setSyntaxEditingStyle("text/MBR");
+            editor.setCodeFoldingEnabled(true);            
             //editor.setCodeFoldingEnabled(true);
             RTextScrollPane sp = new RTextScrollPane(editor);            
             sp.setIconRowHeaderEnabled(true);                                                
             Gutter gutter = sp.getGutter();                                
             gutter.setBookmarkIcon(new ImageIcon(getClass().getResource("/breakpoint.png")));            
             gutter.setBookmarkingEnabled(true);        
-            editor.setText(contenido);                                         
-            CompletionProvider provider = createCompletionProvider();
-            AutoCompletion ac = new AutoCompletion(provider);
-            ac.install(editor);
-            panel.add(sp);    
-            contenedorPaneles.add(nombre, panel);                        
+            editor.setText(contenido);                                                                
+            contenedorPaneles.add(nombre, panel); 
+            SyntaxScheme scheme = editor.getSyntaxScheme();  
+            scheme.setStyle(cont, null);
+            /*scheme.getStyle(Token.RESERVED_WORD).background = Color.pink;
+            scheme.getStyle(Token.DATA_TYPE).foreground = Color.blue;
+            scheme.getStyle(Token.RESERVED_WORD_2).foreground = Color.blue;*/
+            scheme.getStyle(Token.LITERAL_STRING_DOUBLE_QUOTE).underline = true;                       
             //agregarArbolGrafico(nombre);
-            //contadorNuevos++;            
+            //contadorNuevos++;    
+            
+            CompletionProvider provider = createCompletionProvider();
+
+            AutoCompletion ac = new AutoCompletion(provider);
+            ac.install(editor);             
+            editor.revalidate();            
+            panel.add(sp);    
     }     
+    
+   /** * Create a simple provider that adds some Java-related completions. */
+   private CompletionProvider createCompletionProvider() {
+
+      // A DefaultCompletionProvider is the simplest concrete implementation
+      // of CompletionProvider. This provider has no understanding of
+      // language semantics. It simply checks the text entered up to the
+      // caret position for a match against known completions. This is all
+      // that is needed in the majority of cases.
+      DefaultCompletionProvider provider = new DefaultCompletionProvider();
+
+      // Add completions for all Java keywords. A BasicCompletion is just
+      // a straightforward word completion.
+      provider.addCompletion(new BasicCompletion(provider, "ent"));
+      provider.addCompletion(new BasicCompletion(provider, "fusion"));
+      provider.addCompletion(new BasicCompletion(provider, "_imp"));
+      provider.addCompletion(new BasicCompletion(provider, "case"));
+      // ... etc ...
+      provider.addCompletion(new BasicCompletion(provider, "_copy"));
+
+      // Add a couple of "shorthand" completions. These completions don't
+      // require the input text to be the same thing as the replacement text.
+      provider.addCompletion(new ShorthandCompletion(provider, "sysout",
+            "System.out.println(", "System.out.println("));
+      provider.addCompletion(new ShorthandCompletion(provider, "syserr",
+            "System.err.println(", "System.err.println("));
+
+      return provider;
+
+   }
+    
     
     public void nuevoArchivoConData(String nombre, String data)
     {
@@ -1601,7 +1650,7 @@ public class Interfaz extends javax.swing.JFrame implements Runnable{
         } 
         catch (Exception ex) 
         {
-            System.out.println(ex.getMessage());  
+            System.out.println(ex.getMessage() + "\t" + ex.getLocalizedMessage());             
             mostrarErrores();                          
             if(Utilidades.Singlenton.listaErrores.isEmpty()){fechaHora+= "  No se han encontrado errores durante la ejecución.";}
             else{fechaHora+= "  Se han encontrado "+Utilidades.Singlenton.listaErrores.size()+" error(es) durante la ejecución.";}
@@ -2096,53 +2145,7 @@ public class Interfaz extends javax.swing.JFrame implements Runnable{
    {
        provider.addCompletion(new BasicCompletion(provider, valor));
    }
-   
-   private CompletionProvider createCompletionProvider() {
-
-      // A DefaultCompletionProvider is the simplest concrete implementation
-      // of CompletionProvider. This provider has no understanding of
-      // language semantics. It simply checks the text entered up to the
-      // caret position for a match against known completions. This is all
-      // that is needed in the majority of cases.
-      provider = new DefaultCompletionProvider();
-
-      // Add completions for all Java keywords. A BasicCompletion is just
-      // a straightforward word completion.
-      provider.addCompletion(new BasicCompletion(provider, "abstract"));
-      provider.addCompletion(new BasicCompletion(provider, "assert"));
-      provider.addCompletion(new BasicCompletion(provider, "break"));
-      provider.addCompletion(new BasicCompletion(provider, "case"));
-      // ... etc ...
-      provider.addCompletion(new BasicCompletion(provider, "transient"));
-      provider.addCompletion(new BasicCompletion(provider, "try"));
-      provider.addCompletion(new BasicCompletion(provider, "void"));
-      provider.addCompletion(new BasicCompletion(provider, "volatile"));
-      provider.addCompletion(new BasicCompletion(provider, "while"));
-      provider.addCompletion(new BasicCompletion(provider, "do"));
-      provider.addCompletion(new BasicCompletion(provider, "for"));
-      provider.addCompletion(new BasicCompletion(provider, "class"));
-        provider.addCompletion(new BasicCompletion(provider, "if"));
-        provider.addCompletion(new BasicCompletion(provider, "public"));
-        provider.addCompletion(new BasicCompletion(provider, "private"));
-        provider.addCompletion(new BasicCompletion(provider, "static"));
-        provider.addCompletion(new BasicCompletion(provider, "return"));
-        provider.addCompletion(new BasicCompletion(provider, "String"));
-        provider.addCompletion(new BasicCompletion(provider, "double"));
-        provider.addCompletion(new BasicCompletion(provider, "boolean"));
-        provider.addCompletion(new BasicCompletion(provider, "char"));
-        provider.addCompletion(new BasicCompletion(provider, "new"));
-        provider.addCompletion(new BasicCompletion(provider, "toInt"));
-        provider.addCompletion(new BasicCompletion(provider, "toString"));
-      // Add a couple of "shorthand" completions. These completions don't
-      // require the input text to be the same thing as the replacement text.
-      provider.addCompletion(new ShorthandCompletion(provider, "sysout",
-            "System.out.println(", "System.out.println("));
-      provider.addCompletion(new ShorthandCompletion(provider, "syserr",
-            "System.err.println(", "System.err.println("));
-
-      return provider;
-
-   }  
+ 
    
    public void iniciarDepuracion()
    {
