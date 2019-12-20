@@ -5,6 +5,7 @@
  */
 package AST.Entorno;
 
+import static AST.Entorno.Simbolo.Rol.CONSTANTE;
 import static AST.Entorno.Simbolo.Rol.FUNCION;
 import Utilidades.ErrorC;
 import interprete.Interfaz;
@@ -50,6 +51,23 @@ public class Entorno
         tabla.put(simbolo.id, simbolo);        
         return true;
     }
+    
+    public boolean insertarConstante(Simbolo simbolo)
+    {        
+        Simbolo tmp = this.getGlobal().tabla.get(simbolo.id); 
+        /*Error de variable ya declarada.*/
+        if(tmp !=null)
+        {
+            if(tmp.rol==simbolo.rol)
+            {
+                Utilidades.Singlenton.registrarError(simbolo.id, simbolo.rol +" ya declarado. ", ErrorC.TipoError.SEMANTICO, simbolo.linea, simbolo.columna);
+                return false;                
+            }
+        }
+        simbolo.rol = CONSTANTE;
+        this.getGlobal().tabla.put(simbolo.id, simbolo);        
+        return true;
+    }    
     
     public boolean actualizar(Simbolo simbolo)
     {

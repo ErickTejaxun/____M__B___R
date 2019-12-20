@@ -124,8 +124,10 @@ public class Copi implements Instruccion
                         {
                           simbolo.valor= generarArregloAtravesDeCadena(linea, columna, valor.toString(), entorno);                                                       
                         }
+                        break;
 //                         Utilidades.Singlenton.registrarError(Utilidades.Singlenton.nombreVariable, "No se le puede asignar un valor de tipo "+ expresion.getTipo().nombreTipo() +" a un tipo "+simbolo.tipo.nombreTipo(), ErrorC.TipoError.SEMANTICO,linea, columna);
 //                         return null;                      
+                    
                     default:                                
                                 Utilidades.Singlenton.registrarErrorSemantico(id, "Función _copi() solo permite copiar caracteres. Tipo del valor:"+simbolo.tipo.nombreTipo(), linea, linea);
                                 return null;                                                                           

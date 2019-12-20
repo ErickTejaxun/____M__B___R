@@ -94,6 +94,8 @@ sinosi={sino}({comentario}|{espacio})*(si)
             break;  
             case "?":
                 cadena += "?";
+            case "%":
+                cadena += "%";
             break;
             case "\\":
                 cadena += "\\";
@@ -167,6 +169,8 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "#"     {return new Symbol(sym.tcomodin, yychar, yyline, yytext());}
 "definir"  {return new Symbol(sym.tdefinir, yychar, yyline, yytext());}
 "importar" {return new Symbol(sym.importar, yychar, yyline, yytext());}
+"if" {return new Symbol(sym.si, yychar, yyline, yytext());}
+"regresar" {return new Symbol(sym.retorno, yychar, yyline, yytext());}
 "fusion"   {return new Symbol(sym.tfusion, yychar, yyline, yytext());}
 "_imp"  {return new Symbol(sym.print, yychar, yyline, yytext());}
 "_copi"  {return new Symbol(sym.tcopi, yychar, yyline, yytext());}

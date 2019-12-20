@@ -168,7 +168,7 @@ non terminal AsignacionVector ASIGV;
 non terminal NodoNario ITEM,LITEM,ARR;
 non terminal Tipo TIPO;
 non terminal ArrayList<Dec> LDEC;
-non terminal Dec DEC;
+non terminal Dec DEC, DECCONSTANTE;
 non terminal ForEach FOREACH;
 non terminal Caso CASO, DEFECTO;
 non terminal ArrayList<Caso> LCASO;
@@ -180,6 +180,7 @@ non terminal ParametroFormal PARFORMAL;
 non terminal ArrayList<ParametroFormal> LPARFORMAL;
 /*non terminal Constructor CONSTRUCTOR;*/
 non terminal Funcion FUNCION, CABECERAMET;
+non terminal DeclaracionConstante DECLARACIONCONSTANTE;
 /*non terminal ArrayList<Nodo> LFUNCION;*/
 non terminal Retorno RETORNO;
 non terminal Llamada LLAMADA;
@@ -246,6 +247,12 @@ INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |ASIG:inst puntocoma {: RESULT = inst;:}
        |FUSION:inst puntocoma {: RESULT = inst;:}
        |COPI:inst puntocoma {: RESULT = inst;:}
+       /*Todo esto debería de ser solo dentro de las funciones*/
+       |FUNCION:inst  {: RESULT = inst;:}
+       |IF:inst  {: RESULT = inst;:}
+       |RETORNO:inst {:RESULT = inst;:}
+       |LLAMADA:inst puntocoma {:RESULT = inst;:}       
+       |DECLARACIONCONSTANTE:inst {:RESULT = inst;:}
        |error
 ;
 
@@ -254,6 +261,64 @@ COPI::= tcopi:t pari EXP:origen coma EXP:destino pard
         RESULT = new Copi(origen, destino, tright, tleft);
         :}
 ;        
+                /*#definir id 10 */
+                /*#definir id {{1,2},{2,3}} */                
+DECLARACIONCONSTANTE::= tcomodin:t tdefinir DECCONSTANTE:nombre  
+        {:
+            ArrayList<Dec> lista = new ArrayList<Dec>();
+            lista.add(nombre);
+            RESULT = new DeclaracionConstante(null, lista, tright, tleft); 
+        :}
+;
+
+DECCONSTANTE::=     
+      id:id VALORASIGNACION:valor {: RESULT = new Dec(id,valor, idright, idleft);:}    
+    | id:id NDIM:dim VALORARREGLO:valor {: RESULT = new Dec(id,dim, valor, idright, idleft);:}
+    | id:id NDIM:dim ARR:valor {: RESULT = new Dec(id,dim, new ExpresionArreglo(valor, valorright, valorleft), idright, idleft);:}
+    | id:id NDIM:dim EXP:valor 
+        {: 
+            if(valor instanceof Literal)
+            {
+                Literal valTmp = (Literal)valor;
+                if(valTmp.tipo.isString())
+                {
+                    /*Hay que pasar la cadena a una expresionArreglo */
+                    Arreglo tmpArreglo = new Arreglo();
+                    tmpArreglo.columna = valorright;
+                    tmpArreglo.linea = valorleft;            
+                    NodoNario raizArreglo = new NodoNario();
+                    tmpArreglo.raiz = raizArreglo;
+                    raizArreglo.hijos = new ArrayList<NodoNario>();
+                    raizArreglo.tipo = new Tipo(Tipo.TypePrimitive.CHAR);            
+                    char[] caracteres = valTmp.valor.toString().toCharArray();
+                    for(char caracter : caracteres)
+                    {
+                        NodoNario nuevoNodo = new NodoNario();
+                        nuevoNodo.tipo = tmpArreglo.tipo;
+                        nuevoNodo.valor = caracter;
+                        nuevoNodo.linea = valorright;
+                        nuevoNodo.columna = valorleft;
+                        raizArreglo.hijos.add(nuevoNodo);
+                    }
+
+                    RESULT = new Dec(id,dim, 
+                            new ExpresionArreglo(raizArreglo, valorright, valorleft)
+                            ,idright,
+                            idleft);
+                }
+                else
+                {
+                    RESULT = new Dec(id,dim, valor, idright, idleft);
+                }
+            }
+            else
+            {
+                RESULT = new Dec(id,dim, valor, idright, idleft);
+            }
+        :}
+; 
+
+/* --------------------------------------------> fin constantes -*/
 
 DECLARACION::= TIPO:t LDEC:lista {: RESULT = new Declaracion(t, lista, tright, tleft); :} ;
 
@@ -311,7 +376,6 @@ DEC::=
 ;   
 
 /*Dimensiones*/
-
 NDIM ::=  NDIMVACIO:v {:RESULT =v; :}
         | NDIMVALOR:v {:RESULT =v; :}
 ;
@@ -368,7 +432,7 @@ INSTANCIA::=
 PARACTUALES::= ACTUALES:l{:RESULT = l;:}
             | {:RESULT = new ArrayList<Expresion>();:}
 ;            
-ACTUALES::= ACTUALES:l coma EXP:exp {:l.add(exp);RESULT = l;:}
+ACTUALES::=    ACTUALES:l coma EXP:exp {:l.add(exp);RESULT = l;:}
               |EXP:exp {:ArrayList<Expresion> l = new ArrayList<Expresion>(); l.add(exp); RESULT = l ;:}
 ;
 
@@ -427,7 +491,7 @@ EXP::=
         /*Aumento ++ y --*/
         |AUMENTO:op {:RESULT = op;:}        
         |DECREMENTO:op {:RESULT = op;:}        
-        /*|LLAMADA:exp {:RESULT = exp;:}*/
+        |LLAMADA:exp {:RESULT = exp;:}
         /*Primitivas*/
         |entero:v {: RESULT = new Literal(new Tipo(Tipo.TypePrimitive.INT), v, vright,vleft);:}
         |decimal:v {: RESULT = new Literal(new Tipo(Tipo.TypePrimitive.DOUBLE), v, vright,vleft);:}
@@ -507,3 +571,49 @@ DECATRIB::= TIPO:tipo LDEC:declaraciones
                 RESULT = new DeclaracionAtributo(l, d.tipo, d, tiporight,tipoleft); 
             :}             
 ;
+
+
+FUNCION::= CABECERAMET:funcion BLOQUE:bloque {: funcion.setInstrucciones(bloque); RESULT = funcion;:}
+;
+
+CABECERAMET::=  
+     TIPO:res id:nombre pari LPARFORMAL:lf pard {: Funcion f = new Funcion( new ArrayList<String>(),res,nombre, lf, resright,resleft ); RESULT = f;:}
+    | tvoid:res id:nombre pari LPARFORMAL:lf pard {: Funcion f = new Funcion( new ArrayList<String>(), new Tipo(res),nombre, lf, resright,resleft ); RESULT = f;:}
+;
+
+BLOQUE::= llavei LINST:l llaved {:RESULT = new Bloque(l,lright,lleft);:}
+        | llavei:l  llaved {:RESULT = new Bloque(new ArrayList<Nodo>(),lright,lleft);:}
+;
+
+
+RETORNO ::= retorno:r EXPRETORNO:exp puntocoma{:RESULT = new Retorno(exp, rright, rleft);:} 
+          | retorno:r puntocoma {: RESULT = new Retorno( rright, rleft);:}
+;
+
+EXPRETORNO::= 
+            EXP:exp {:RESULT = exp;:};
+
+LPARFORMAL::= 
+         LPARFORMAL:lista coma PARFORMAL:par {:lista.add(par); RESULT = lista;:}
+        |PARFORMAL:par {:ArrayList<ParametroFormal> l = new ArrayList<ParametroFormal>(); l.add(par); RESULT = l;:}
+        |{: ArrayList<ParametroFormal> l = new ArrayList<ParametroFormal>();RESULT = l; :}
+;
+
+PARFORMAL::=  
+         TIPO:tipo id:nombre{: RESULT = new ParametroFormal(tipo, nombre, true,new ArrayList<Expresion>(), tiporight, tipoleft);:}
+        | final_:f TIPO:tipo id:nombre {: RESULT = new ParametroFormal(tipo, nombre, true,new ArrayList<Expresion>(),fright, fleft);:}
+        | TIPO:tipo id:nombre NDIM:n{: RESULT = new ParametroFormal(tipo, nombre, true,n, tiporight, tipoleft);:}
+        | final_:f TIPO:tipo id:nombre NDIM:n {: RESULT = new ParametroFormal(tipo, nombre, true, n, fright, fleft);:}             
+;
+        
+
+IF::= si:si pari EXP:condicion pard BLOQUE:bloque {:RESULT = new If(condicion, bloque, siright, sileft);:}
+    | si:si pari EXP:condicion pard BLOQUE:bloque sino ELSE:inst2 {: RESULT= new If(condicion,bloque,inst2,siright, sileft);:}
+;
+
+
+LLAMADA::=            
+            ACCESO:origen punto id:nombre pari PARACTUALES:l pard {:RESULT = new Llamada(origen,nombre, l, origenright,origenleft);:}                      
+           | id:nombre pari PARACTUALES:l pard {:RESULT = new Llamada(null, nombre, l, nombreright,nombreleft);:}                      
+;
+

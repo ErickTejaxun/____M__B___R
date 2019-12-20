@@ -54,11 +54,28 @@ public class Asignacion implements Instruccion
     public Object ejectuar(Entorno entorno) 
     {        
         //Simbolo simbolo = entorno.obtener(this.id);
-        Simbolo simbolo = null;        
+        Simbolo simbolo = null;   
+        if(destino instanceof Simbolo)
+        {
+            Simbolo simboloTmp = (Simbolo)destino;
+            if(simboloTmp.rol == Simbolo.Rol.CONSTANTE)
+            {
+                Utilidades.Singlenton.registrarErrorSemantico(simboloTmp.id, "No es posible la reasignación a un valor constate.", linea, columna);
+                return null;
+            }
+        }
         if(destino instanceof Variable)
         {
             Variable var = (Variable) destino;
             simbolo = entorno.obtener(var.id);
+            
+            /*Verificamos si no es constante*/
+            if(simbolo.rol == Simbolo.Rol.CONSTANTE)
+            {
+                Utilidades.Singlenton.registrarErrorSemantico(simbolo.id, "No es posible la reasignación a un valor constate.", linea, columna);
+                return null;                
+            }
+            
             /*Primero tenemos que verificar si la asignación es a un arreglo como tal*/
             if(simbolo.rol == Simbolo.Rol.ARREGLO)
             {
@@ -76,6 +93,17 @@ public class Asignacion implements Instruccion
             {
                 Acceso tmpAcceso = (Acceso)this.destino;   
                 Object contenedorVariable = tmpAcceso.origen.getValor(entorno);
+                
+                if(contenedorVariable instanceof Simbolo)
+                {
+                    Simbolo simboloTmp = (Simbolo)contenedorVariable;
+                    if(simboloTmp.rol == Simbolo.Rol.CONSTANTE)
+                    {
+                        Utilidades.Singlenton.registrarErrorSemantico(simboloTmp.id, "No es posible la reasignación a un valor constate.", linea, columna);
+                        return null;
+                    }
+                }                
+                
                 if(contenedorVariable instanceof Objeto)
                 {
                     Objeto varContenedor = (Objeto)contenedorVariable;

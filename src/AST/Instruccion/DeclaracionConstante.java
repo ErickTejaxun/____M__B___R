@@ -10,12 +10,12 @@ import AST.Clase.Objeto;
 import AST.Entorno.Simbolo;
 import AST.Expresion.Expresion;
 import AST.Entorno.Entorno;
+import static AST.Entorno.Simbolo.Rol.CONSTANTE;
 import AST.Entorno.Tipo;
 import static AST.Entorno.Tipo.TypePrimitive.CHAR;
 import AST.Expresion.Arreglo.Arreglo;
 import AST.Expresion.Arreglo.ExpresionArreglo;
 import AST.Expresion.Arreglo.NodoNario;
-import AST.Expresion.Literal;
 import Utilidades.ErrorC;
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ import java.util.ArrayList;
  *
  * @author erick
  */
-public class Declaracion implements Instruccion
+public class DeclaracionConstante implements Instruccion
 {
     public Tipo tipo;
     public String id;
@@ -33,7 +33,7 @@ public class Declaracion implements Instruccion
     public ArrayList<Dec> declaraciones;
     
     
-    public Declaracion(Tipo t, String id, int d, int l,int c)
+    public DeclaracionConstante(Tipo t, String id, int d, int l,int c)
     {
         this.tipo = t;
         this.id = id;
@@ -42,7 +42,7 @@ public class Declaracion implements Instruccion
         this.dimensiones = d;
     }  
     
-    public Declaracion(Tipo t, ArrayList<Dec> lista, int l, int c)
+    public DeclaracionConstante(Tipo t, ArrayList<Dec> lista, int l, int c)
     {
         this.tipo = t;
         this.declaraciones = lista;
@@ -51,7 +51,7 @@ public class Declaracion implements Instruccion
     }
     
     
-    public Declaracion(Tipo t, String id, int d, Expresion e, int l,int c)
+    public DeclaracionConstante(Tipo t, String id, int d, Expresion e, int l,int c)
     {
         this.tipo = t;
         this.id = id;
@@ -61,7 +61,7 @@ public class Declaracion implements Instruccion
         this.expresion = e;
     }    
     
-    public Declaracion(Tipo t, String id, int l,int c)
+    public DeclaracionConstante(Tipo t, String id, int l,int c)
     {
         this.tipo = t;
         this.id = id;
@@ -70,7 +70,7 @@ public class Declaracion implements Instruccion
         this.dimensiones = 0;
     }
     
-    public Declaracion(Tipo t, String id, Expresion e, int l, int c)
+    public DeclaracionConstante(Tipo t, String id, Expresion e, int l, int c)
     {
         this.tipo = t;
         this.id = id;
@@ -103,7 +103,8 @@ public class Declaracion implements Instruccion
         Object valor = null;
         /*Verificamos si se le ha asignado un valor inicial.*/
         if(expresion!=null)
-        {                                   
+        {     
+            this.tipo = expresion.getTipo();
             if(expresion instanceof Instancia)
             {
                 Instancia e = (Instancia)expresion;
@@ -229,6 +230,7 @@ public class Declaracion implements Instruccion
         if(valor instanceof Objeto)
         {
             Objeto valorObjeto = (Objeto)valor;
+            valorObjeto.rol = CONSTANTE;
             /*Ahora verificamos que ambos sean del mismo tipo*/
             if(!(valorObjeto.getTipo().nombreTipo().toLowerCase().equals(this.tipo.nombreTipo().toLowerCase())))
             {
@@ -242,7 +244,7 @@ public class Declaracion implements Instruccion
                 valorObjeto.id = this.declaraciones.get(0).id;
             }
             
-            entorno.insertar(valorObjeto);
+            entorno.insertarConstante(valorObjeto);
             return null;
             /*Recordar que si no coinciden los tipos hay que verificar si es necesario hacer un casteo implicito.*/            
             /*Coincidieron los tipos.*/            
@@ -261,13 +263,15 @@ public class Declaracion implements Instruccion
                 valor = tmp.getValor(entorno);
                 Simbolo s = this.dimensiones == 0 ? 
                     new Simbolo(tipo,id,valor,linea,columna):
-                    new Simbolo(tipo,id,valor,dimensiones ,linea,columna);            
-                entorno.insertar(s);
+                    new Simbolo(tipo,id,valor,dimensiones ,linea,columna);   
+                s.rol = CONSTANTE;
+                entorno.insertarConstante(s);
             } 
             else // en este caso es una declaración de una estructura con valor nulo (a huevos, solo es declaración). 
             {
                 Simbolo s = new Simbolo(tipo,id,valor,linea,columna);
-                entorno.insertar(s);
+                s.rol = CONSTANTE;
+                entorno.insertarConstante(s);
             }
         }
         else
@@ -275,7 +279,7 @@ public class Declaracion implements Instruccion
             /*Verificamos los tamaños de cada una de las dimensiones*/
             if(dimensiones.size() == 0)
             {
-                entorno.insertar(new Simbolo(tipo,id,valor,linea,columna));
+                entorno.insertarConstante(new Simbolo(tipo,id,valor,linea,columna));
             }
             else
             {
@@ -318,8 +322,10 @@ public class Declaracion implements Instruccion
                     nodoTmp = nodoTmp.hijos.get(0);                    
                 }
                 
-                /*Verificamos lo los números de elementos de las dimensiones.*/                
-                entorno.insertar(new Simbolo(tipo,id,valor,new ArrayList<Expresion>() ,linea,columna));
+                /*Verificamos lo los números de elementos de las dimensiones.*/       
+                Simbolo simboloNuevo = new Simbolo(tipo,id,valor,new ArrayList<Expresion>() ,linea,columna);
+                simboloNuevo.rol = CONSTANTE;
+                entorno.insertarConstante(simboloNuevo);
             }                                                    
         }
         return this;

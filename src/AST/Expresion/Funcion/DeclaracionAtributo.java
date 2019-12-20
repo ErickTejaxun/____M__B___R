@@ -93,7 +93,7 @@ public class DeclaracionAtributo implements Instruccion
         {                       
             for(Dec d: declaraciones.declaraciones)
             {
-                declaraciones(entorno, d.id, d.valor, d.Sizedimensiones.size());
+                declaraciones(entorno, d.id, d.valor, d.Sizedimensiones);
             }
             return null;
         }
@@ -104,7 +104,7 @@ public class DeclaracionAtributo implements Instruccion
     }
 
     
-    public Object declaraciones(Entorno entorno, String id, Expresion expresion, int dimensiones)
+    public Object declaraciones(Entorno entorno, String id, Expresion expresion, ArrayList<Expresion> dimensiones)
     {        
         Object valor = null;
         /*Verificamos si se le ha asignado un valor inicial.*/
@@ -191,7 +191,7 @@ public class DeclaracionAtributo implements Instruccion
         }  
         /*Si no se le asigna un valor de inicio, hay que inicializar */
         else
-        if(dimensiones ==0)
+        if(dimensiones.size() ==0)
         {                            
             switch(this.tipo.typeprimitive)
             {
@@ -217,7 +217,7 @@ public class DeclaracionAtributo implements Instruccion
         {
             Arreglo arregloTmp = (Arreglo)valor;
             System.out.println(arregloTmp.getCadena());
-            if(arregloTmp.tamaniosDimensiones.size() != dimensiones)
+            if(arregloTmp.tamaniosDimensiones.size() != dimensiones.size())
             {
                 Utilidades.Singlenton.registrarError(id, "No coincide el número de las dimensiones del valor a asignar", ErrorC.TipoError.SEMANTICO,linea, columna);
                 return this;

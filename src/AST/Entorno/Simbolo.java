@@ -6,6 +6,8 @@
 package AST.Entorno;
 
 import static AST.Entorno.Simbolo.Rol.*;
+import AST.Expresion.Expresion;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,12 +18,12 @@ public class Simbolo
     public String id;        
     public Tipo tipo;
     public Object valor;
-    public enum Rol{VAR, FUNCION, METODO, OBJETO, CLASE, ARREGLO,CONSTRUCTOR};
+    public enum Rol{VAR, FUNCION, METODO, OBJETO, CLASE, ARREGLO,CONSTRUCTOR,CONSTANTE};
     public Rol rol= VAR;
     public int linea, columna;     
-    public int dimensiones;
+    public ArrayList<Expresion> dimensiones;
     
-    public Simbolo(Tipo t, String id, int dim, int l, int c)
+    public Simbolo(Tipo t, String id, ArrayList<Expresion> dim, int l, int c)
     {
         this.tipo = t;
         this.id = id;
@@ -44,7 +46,7 @@ public class Simbolo
         columna = 0;
     }        
 
-    public Simbolo(Tipo t, String id, Object v ,int dim, int l, int col)
+    public Simbolo(Tipo t, String id, Object v ,ArrayList<Expresion> dim, int l, int col)
     {
         this.id = id;
         this.tipo = t;
@@ -84,7 +86,7 @@ public class Simbolo
     
     public String getMessage()
     {
-        return  dimensiones==0?    
+        return  dimensiones.size()==0?    
                 id +"\t"+tipo.nombreTipo()+"\t"+valor+"\t"+this.rol+"\t\t"+linea+"\t"+columna:
                 id +"\t"+tipo.nombreTipo()+"\t"+valor+"\t"+this.rol+"\t"+dimensiones+"\t"+linea+"\t"+columna;
                 
