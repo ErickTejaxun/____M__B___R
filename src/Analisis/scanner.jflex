@@ -166,13 +166,14 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "chr"  {return new Symbol(sym.tchar, yychar, yyline, yytext());}
 "bul"   {return new Symbol(sym.tbool, yychar, yyline, yytext());} 
 "nlo"  {return new Symbol(sym.nulo, yychar, yyline, yytext());}
-"#"     {return new Symbol(sym.tcomodin, yychar, yyline, yytext());}
-"definir"  {return new Symbol(sym.tdefinir, yychar, yyline, yytext());}
+"#definir"  {return new Symbol(sym.tdefinir, yychar, yyline, yytext());}
 "importar" {return new Symbol(sym.importar, yychar, yyline, yytext());}
-"if" {return new Symbol(sym.si, yychar, yyline, yytext());}
+{si} {return new Symbol(sym.si, yychar, yyline, yytext());}
+{sino} {return new Symbol(sym.sino, yychar, yyline, yytext());}
 "regresar" {return new Symbol(sym.retorno, yychar, yyline, yytext());}
 "fusion"   {return new Symbol(sym.tfusion, yychar, yyline, yytext());}
 "_imp"  {return new Symbol(sym.print, yychar, yyline, yytext());}
+"_msn"  {return new Symbol(sym.msn, yychar, yyline, yytext());}
 "_copi"  {return new Symbol(sym.tcopi, yychar, yyline, yytext());}
 "zro"  {return new Symbol(sym.tvoid, yychar, yyline, yytext());}
 "_concat"  {return new Symbol(sym.tconcatenar, yychar, yyline, yytext());}
@@ -186,7 +187,8 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "_wf"  {return new Symbol(sym.twriteend, yychar, yyline, yytext());}
 "_close"  {return new Symbol(sym.tclose, yychar, yyline, yytext());}
 
-
+"&&"   {return new Symbol(sym.and, yychar, yyline, yytext());}
+"||"   {return new Symbol(sym.or, yychar, yyline, yytext());}
 /*Palabras reservadas de sentencias de control*/
 "mientras"  {return new Symbol(sym.mientras, yychar, yyline, yytext());}
 "hacer"     {return new Symbol(sym.hacer, yychar, yyline, yytext());}
@@ -221,7 +223,7 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "["   {return new Symbol(sym.corchetei, yychar, yyline, yytext());}
 "]"   {return new Symbol(sym.corcheted, yychar, yyline, yytext());}
 "="   {return new Symbol(sym.igual, yychar, yyline, yytext());}
-
+"!"   {return new Symbol(sym.not, yychar, yyline, yytext());}
 {comilla}  
         {  
             cadena = "";                    

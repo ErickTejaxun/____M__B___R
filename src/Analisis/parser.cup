@@ -125,7 +125,7 @@ parser code
 
 terminal String tint, tdouble, tchar, tbool, tstring, puntocoma, llavei, llaved, pari, pard, id, corchetei, corcheted, igual, print, println, coma;
 terminal String igualigual, desigual, mayor, menor, menorigual, mayorigual, potencia , tvoid, nulo, tcomodin;
-terminal String abstracto, caso, cat, clase, defecto, hacer, extiende, final_, graph;
+terminal String abstracto, caso, cat, clase, defecto, hacer, extiende, final_, graph,msn;
 terminal String importar, instanceof_, nuevo, privado, protegido, publico, retorno, tcopi;
 
 /*Palabras reservadas :v*/
@@ -150,6 +150,7 @@ non terminal Expresion EXP, AUMENTO, DECREMENTO, EXPLICITCAST;
 non terminal INICIO;
 non terminal Tipo PRIMITIVO;
 non terminal Imprimir PRINT;
+non terminal Message MSN;
 non terminal ImprimirT PRINTABLE;
 non terminal Asignacion ASIG;
 non terminal While WHILE;
@@ -201,6 +202,7 @@ non terminal Expresion ACCESO, ORIGEN;
 non terminal Expresion INSTANCIA;
 non terminal Expresion VALORASIGNACION;
 non terminal Importar IMPORTAR;
+
 /*
 precedence left interrogante, punto;
 precedence left or;
@@ -214,6 +216,8 @@ precedence left not;
 precedence left aumento, decremento ;
 */
 
+
+precedence left not;
 precedence right interrogante, dospuntos;
 precedence left or;
 precedence left and;
@@ -223,14 +227,11 @@ precedence left menor, menorigual, mayor, mayorigual, instanceof_;
 precedence left suma, menos;
 precedence left div, multi, modulo;
 precedence left potencia;
-precedence left not;
 precedence right nuevo;
 precedence nonassoc aumento, decremento, not;
 precedence nonassoc pard , pari;
 precedence nonassoc corcheted , corchetei;
 precedence left punto;
-
-
 
 start with INICIO;
 
@@ -242,6 +243,7 @@ LINST::= LINST:lista INST:inst {: lista.add(inst); RESULT = lista;:}
 ;
 
 INST::= PRINT:inst puntocoma {: RESULT = inst;:}
+       |MSN:inst puntocoma {: RESULT = inst;:}
        |DECLARACION:inst puntocoma {: RESULT = inst;:}
        |ASIGV:inst puntocoma {: RESULT = inst;:}
        |ASIG:inst puntocoma {: RESULT = inst;:}
@@ -263,7 +265,7 @@ COPI::= tcopi:t pari EXP:origen coma EXP:destino pard
 ;        
                 /*#definir id 10 */
                 /*#definir id {{1,2},{2,3}} */                
-DECLARACIONCONSTANTE::= tcomodin:t tdefinir DECCONSTANTE:nombre  
+DECLARACIONCONSTANTE::= tdefinir:t DECCONSTANTE:nombre  
         {:
             ArrayList<Dec> lista = new ArrayList<Dec>();
             lista.add(nombre);
@@ -271,11 +273,9 @@ DECLARACIONCONSTANTE::= tcomodin:t tdefinir DECCONSTANTE:nombre
         :}
 ;
 
-DECCONSTANTE::=     
-      id:id VALORASIGNACION:valor {: RESULT = new Dec(id,valor, idright, idleft);:}    
-    | id:id NDIM:dim VALORARREGLO:valor {: RESULT = new Dec(id,dim, valor, idright, idleft);:}
-    | id:id NDIM:dim ARR:valor {: RESULT = new Dec(id,dim, new ExpresionArreglo(valor, valorright, valorleft), idright, idleft);:}
-    | id:id NDIM:dim EXP:valor 
+DECCONSTANTE::=           
+      id:id VALORARREGLO:valor {: RESULT = new Dec(id, valor, idright, idleft);:}    
+    | id:id VALORASIGNACION:valor 
         {: 
             if(valor instanceof Literal)
             {
@@ -301,19 +301,19 @@ DECCONSTANTE::=
                         raizArreglo.hijos.add(nuevoNodo);
                     }
 
-                    RESULT = new Dec(id,dim, 
+                    RESULT = new Dec(id, 
                             new ExpresionArreglo(raizArreglo, valorright, valorleft)
                             ,idright,
                             idleft);
                 }
                 else
                 {
-                    RESULT = new Dec(id,dim, valor, idright, idleft);
+                    RESULT = new Dec(id, valor, idright, idleft);
                 }
             }
             else
             {
-                RESULT = new Dec(id,dim, valor, idright, idleft);
+                RESULT = new Dec(id, valor, idright, idleft);
             }
         :}
 ; 
@@ -454,6 +454,26 @@ PRINT::= print:p pari cadena:v pard
                     l);  
         :}        
 ;
+
+
+MSN::= msn:p pari cadena:v pard  
+        {: 
+            RESULT = new Message(
+                    new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft), 
+                    pright,
+                    pleft);  
+        :}
+        |msn:p pari cadena:v coma LVALORES:l pard  
+        {: 
+            RESULT = new Message(
+                    new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft), 
+                    pright,
+                    pleft,
+                    l);  
+        :}        
+;
+
+
 
 
 LVALORES ::= LVALORES:l coma EXP:exp {:RESULT = l; RESULT.add(exp); :}
@@ -611,6 +631,9 @@ IF::= si:si pari EXP:condicion pard BLOQUE:bloque {:RESULT = new If(condicion, b
     | si:si pari EXP:condicion pard BLOQUE:bloque sino ELSE:inst2 {: RESULT= new If(condicion,bloque,inst2,siright, sileft);:}
 ;
 
+ELSE::= IF:inst  {:RESULT = inst;:}
+      | BLOQUE:bloque {: RESULT = new If(new Literal(new Tipo(Tipo.TypePrimitive.BOOL), true, bloqueright,bloqueleft),bloque, bloqueright, bloqueleft); :}
+;
 
 LLAMADA::=            
             ACCESO:origen punto id:nombre pari PARACTUALES:l pard {:RESULT = new Llamada(origen,nombre, l, origenright,origenleft);:}                      
