@@ -190,15 +190,19 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "&&"   {return new Symbol(sym.and, yychar, yyline, yytext());}
 "||"   {return new Symbol(sym.or, yychar, yyline, yytext());}
 /*Palabras reservadas de sentencias de control*/
-"mientras"  {return new Symbol(sym.mientras, yychar, yyline, yytext());}
+"while"  {return new Symbol(sym.mientras, yychar, yyline, yytext());}
 "hacer"     {return new Symbol(sym.hacer, yychar, yyline, yytext());}
-"para"      {return new Symbol(sym.para, yychar, yyline, yytext());}
+"for"      {return new Symbol(sym.para, yychar, yyline, yytext());}
 "repetir"   {return new Symbol(sym.repetir, yychar, yyline, yytext());}
 "switch"    {return new Symbol(sym.switch_, yychar, yyline, yytext());}
 "case"      {return new Symbol(sym.caso, yychar, yyline, yytext());}
 "romper"    {return new Symbol(sym.romper, yychar, yyline, yytext());}
-"seguir"    {return new Symbol(sym.continuar, yychar, yyline, yytext());}
+"siga"    {return new Symbol(sym.continuar, yychar, yyline, yytext());}
+"repeat"    {return new Symbol(sym.hacer, yychar, yyline, yytext());}
 
+
+"++"   {return new Symbol(sym.aumento, yychar, yyline, yytext());}
+"--"   {return new Symbol(sym.decremento, yychar, yyline, yytext());}
 
 /*Palabras reservadas*/
 ";"   {return new Symbol(sym.puntocoma, yychar, yyline, yytext());}

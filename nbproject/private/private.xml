@@ -3,13 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/erick/Documents/NetBeansProjects/MBR_201213050/src/AST/Instruccion/Copi.java</file>
-            <file>file:/C:/Users/erick/Documents/NetBeansProjects/MBR_201213050/src/Analisis/parser.java</file>
-            <file>file:/C:/Users/erick/Documents/NetBeansProjects/MBR_201213050/src/AST/AST.java</file>
-            <file>file:/C:/Users/erick/Documents/NetBeansProjects/MBR_201213050/src/AST/Instruccion/Asignacion.java</file>
-            <file>file:/C:/Users/erick/Documents/NetBeansProjects/MBR_201213050/src/interprete/Interfaz.java</file>
-            <file>file:/C:/Users/erick/Documents/NetBeansProjects/MBR_201213050/src/AST/Entorno/Simbolo.java</file>
-            <file>file:/C:/Users/erick/Documents/NetBeansProjects/MBR_201213050/src/AST/Expresion/Funcion/Constructor.java</file>
+            <file>file:/C:/Users/erick/Documents/NetBeansProjects/MBR_201213050/src/AST/Expresion/Funcion/Llamada.java</file>
         </group>
     </open-files>
 </project-private>

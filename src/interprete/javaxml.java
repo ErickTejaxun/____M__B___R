@@ -17,6 +17,7 @@ public class javaxml extends AbstractTokenMaker
     {
         TokenMap tokenMap = new TokenMap();
 
+        tokenMap.put("#definir", RESERVED_WORD);
         tokenMap.put("zro", RESERVED_WORD);
         tokenMap.put("ent", RESERVED_WORD);
         tokenMap.put("chr", RESERVED_WORD);

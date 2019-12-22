@@ -160,7 +160,8 @@ non terminal Continuar CONTINUE;
 non terminal If IF, ELSE;
 non terminal Ternario TER;
 non terminal For FOR;
-non terminal Expresion ACTUALIZACION, EXPRETORNO;
+non terminal Expresion /*ACTUALIZACION,*/ EXPRETORNO;
+non terminal Nodo ACTUALIZACION;
 /*---------------> Dimensiones*/
 non terminal ArrayList<Expresion> NDIM, NDIMVACIO, NDIMVALOR;
 /*--------------->*/
@@ -254,6 +255,12 @@ INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |IF:inst  {: RESULT = inst;:}
        |RETORNO:inst {:RESULT = inst;:}
        |LLAMADA:inst puntocoma {:RESULT = inst;:}       
+       |WHILE:inst  {:RESULT = inst;:}
+       |DOWHILE:inst puntocoma {:RESULT = inst;:}
+       |FOR:inst  {:RESULT = inst;:}
+       |BREAK:inst puntocoma {:RESULT = inst;:}
+       |CONTINUE:inst puntocoma {:RESULT = inst;:}
+       |SWITCH:inst {:RESULT = inst;:}
        |DECLARACIONCONSTANTE:inst {:RESULT = inst;:}
        |error
 ;
@@ -377,7 +384,7 @@ DEC::=
 
 /*Dimensiones*/
 NDIM ::=  NDIMVACIO:v {:RESULT =v; :}
-        | NDIMVALOR:v {:RESULT =v; :}
+        | LEXP:v {:RESULT =v; :}
 ;
 
 
@@ -387,10 +394,12 @@ NDIMVACIO::=
         |corchetei corcheted {: RESULT = new ArrayList<Expresion>(); RESULT.add(null);:}
 ;  
 
+/*
 NDIMVALOR::= 
          NDIMVALOR:n corchetei EXP:valor corcheted {:RESULT = n ; n.add(valor);:}
         |corchetei EXP:valor corcheted {: RESULT = new ArrayList<Expresion>(); RESULT.add(valor);:}
 ; 
+*/
 
 VALORARREGLO::=
           llavei LEXP:l  llaved {: RESULT = new ExpresionArreglo(l,lright,lleft);:}
@@ -409,12 +418,15 @@ ITEM::= EXP:exp {: RESULT = new NodoNario(exp);:}
         |ARR:exp {: RESULT = exp;:} 
 ;
 
-ASIG::= ACCESO:origen igual VALORASIGNACION:valor   {: RESULT = new Asignacion(origen , valor, origenright, origenleft);:}       
+ASIG::= ACCESO:origen igual VALORASIGNACION:valor   
+        {: 
+            RESULT = new Asignacion(origen , valor, origenright, origenleft);
+        :}
        
 ;
 
-ASIGV::= id:id LEXP:coordenas igual EXP:valor {: RESULT = new AsignacionVector(id, coordenas, valor,  idright,idleft);:}
-;
+/*ASIGV::= id:id LEXP:coordenas igual EXP:valor {: RESULT = new AsignacionVector(id, coordenas, valor,  idright,idleft);:}
+;*/
 
 
 VALORASIGNACION::= 
@@ -480,7 +492,7 @@ LVALORES ::= LVALORES:l coma EXP:exp {:RESULT = l; RESULT.add(exp); :}
             |EXP:exp {: RESULT = new ArrayList<Expresion>(); RESULT.add(exp); :}
 ;
 
-LEXP::= LEXP:l corchetei EXP:exp corcheted{:l.add(exp); RESULT = l;:}
+LEXP::=   LEXP:l corchetei EXP:exp corcheted{:l.add(exp); RESULT = l;:}
         | corchetei EXP:exp corcheted {: ArrayList<Expresion> l = new ArrayList<Expresion>(); l.add(exp); RESULT = l;:}
 ;
 
@@ -538,13 +550,13 @@ ACCESO::= ACCESO:origen punto ORIGEN:destino {: RESULT = new Acceso(origen, dest
 ;
 
 ORIGEN::=
-          id:id {:RESULT = new Variable(id, idright, idleft);:}        
+          TIPO:id {:RESULT = new Variable(id.nombreTipo(), idright, idleft);:}        
         | ORIGEN:origen LEXP:coor {: RESULT = new AccesoVector(origen , coor , origenright, origenleft);:}
         
 ;
 
 TIPO::= PRIMITIVO:t{:RESULT = t;:}
-      | id:id {:RESULT = new Tipo(id,idright, idleft);:}
+      | id:id {:RESULT = new Tipo(id,idright, idleft);:}      
 ;
 
 PRIMITIVO ::=   
@@ -596,9 +608,22 @@ DECATRIB::= TIPO:tipo LDEC:declaraciones
 FUNCION::= CABECERAMET:funcion BLOQUE:bloque {: funcion.setInstrucciones(bloque); RESULT = funcion;:}
 ;
 
-CABECERAMET::=  
-     TIPO:res id:nombre pari LPARFORMAL:lf pard {: Funcion f = new Funcion( new ArrayList<String>(),res,nombre, lf, resright,resleft ); RESULT = f;:}
-    | tvoid:res id:nombre pari LPARFORMAL:lf pard {: Funcion f = new Funcion( new ArrayList<String>(), new Tipo(res),nombre, lf, resright,resleft ); RESULT = f;:}
+CABECERAMET::=
+      TIPO:res id:nombre pari LPARFORMAL:lf pard 
+                {: 
+                    Funcion f = new Funcion( new ArrayList<String>(),res,nombre, lf, resright,resleft ); 
+                    RESULT = f;
+                :}  
+    | TIPO:res NDIMVACIO id:nombre pari LPARFORMAL:lf pard 
+                {: 
+                    Funcion f = new Funcion( new ArrayList<String>(),res,nombre, lf, resright,resleft ); 
+                    RESULT = f;
+                :}                                          
+    | tvoid:res id:nombre pari LPARFORMAL:lf pard 
+                {: 
+                    Funcion f = new Funcion( new ArrayList<String>(), new Tipo(res),nombre, lf, resright,resleft ); 
+                    RESULT = f;
+                :}
 ;
 
 BLOQUE::= llavei LINST:l llaved {:RESULT = new Bloque(l,lright,lleft);:}
@@ -638,5 +663,52 @@ ELSE::= IF:inst  {:RESULT = inst;:}
 LLAMADA::=            
             ACCESO:origen punto id:nombre pari PARACTUALES:l pard {:RESULT = new Llamada(origen,nombre, l, origenright,origenleft);:}                      
            | id:nombre pari PARACTUALES:l pard {:RESULT = new Llamada(null, nombre, l, nombreright,nombreleft);:}                      
+;
+
+WHILE::= mientras:inst pari EXP:condicion pard BLOQUE:bloque {: RESULT = new While(condicion,bloque,instright, instleft);:}
+;
+
+CONTINUE::= continuar:inst puntocoma {: RESULT = new Continuar(instright, instleft);:}
+;
+
+BREAK::= romper:inst puntocoma {: RESULT = new Break(instright, instleft);:}
+;
+
+SWITCH::= switch_:i pari EXP:condicion pard llavei LCASO:lista llaved
+        {:
+            RESULT = new Switch(condicion, lista, iright, ileft);
+        :}
+        | switch_:i pari EXP:condicion pard llavei LCASO:lista DEFECTO:defecto llaved 
+        {:
+            lista.add(defecto);
+            RESULT = new Switch(condicion, lista, iright, ileft);
+        :}
+;
+
+LCASO::= LCASO:l CASO:caso {:l.add(caso); RESULT = l;:}
+        |CASO:caso {:ArrayList<Caso> l = new ArrayList<Caso>(); l.add(caso); RESULT = l;:}
+;
+
+CASO::= caso:i EXP:condicion dospuntos LINST:linst {:RESULT = new Caso(condicion,new Bloque(linst,linstright,linstleft),iright,ileft);:}
+;
+
+DEFECTO::= defecto:i dospuntos LINST:linst {:RESULT = new Caso(null,new Bloque(linst,linstright,linstleft),iright,ileft);:}
+;
+
+DOWHILE::=  hacer:i BLOQUE:bloque mientras:inst pari EXP:condicion pard puntocoma
+        {:
+            RESULT = new DoWhile(condicion, bloque, iright, ileft);
+        :}
+;
+
+FOR::= 
+      para:para pari DECLARACION:dec puntocoma EXP:condicion puntocoma ACTUALIZACION:act  pard BLOQUE:bloque{: RESULT = new For(dec,condicion,act,bloque, paraleft,pararight);:}
+    | para:para pari ASIG:dec puntocoma EXP:condicion puntocoma ACTUALIZACION:act  pard BLOQUE:bloque{: RESULT = new For(dec,condicion,act,bloque,paraleft,pararight);:}
+;
+
+ACTUALIZACION::= AUMENTO :inst {:RESULT =inst;:}
+                |DECREMENTO :inst {:RESULT =inst;:}
+                |ASIG:inst {:RESULT =inst;:}
+                |ASIGV:inst {:RESULT =inst;:}
 ;
 

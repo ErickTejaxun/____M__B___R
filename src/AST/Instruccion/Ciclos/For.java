@@ -10,6 +10,7 @@ import static AST.Entorno.Tipo.TypePrimitive.*;
 import AST.Expresion.Expresion;
 import AST.Instruccion.Bloque;
 import AST.Instruccion.Instruccion;
+import AST.Nodo;
 import Utilidades.ErrorC;
 
 /**
@@ -21,10 +22,10 @@ public class For implements Instruccion
     int linea, columna;
     public Instruccion Inicio;
     public Expresion condicion;
-    public Expresion Actualizacion;
+    public Nodo Actualizacion;
     public Bloque instrucciones;    
     
-    public For(Instruccion i, Expresion cond, Expresion act, Bloque inst, int l, int c)
+    public For(Instruccion i, Expresion cond, Nodo act, Bloque inst, int l, int c)
     {
         this.Inicio = i;
         this.condicion = cond;
@@ -52,7 +53,15 @@ public class For implements Instruccion
                 {
                     break;
                 }
-                Actualizacion.getValor(local);
+                if(Actualizacion instanceof Expresion)
+                {
+                    ((Expresion)Actualizacion).getValor(local);
+                }
+                else
+                if(Actualizacion instanceof Instruccion)
+                {
+                    ((Instruccion)Actualizacion).ejectuar(local);
+                }
                 condicional = condicion.getValor(local);
             }
         }

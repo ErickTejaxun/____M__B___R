@@ -9,19 +9,23 @@ import AST.Entorno.Entorno;
 import AST.Entorno.Tipo;
 import AST.Expresion.Arreglo.Arreglo;
 import AST.Expresion.Expresion;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  *
  * @author erick
  */
-public class Imprimir implements Instruccion
+public class Message implements Instruccion
 {
     public int linea, columna;
     public Expresion valor;
     public boolean salto;
     public ArrayList<Expresion> listaValores;
-    public Imprimir(Expresion v, int l, int c)
+    public Message(Expresion v, int l, int c)
     {
         this.valor = v;
         this.linea = l;
@@ -29,7 +33,7 @@ public class Imprimir implements Instruccion
         this.salto = true;
     }
        
-    public Imprimir(Expresion v, int l, int c, ArrayList<Expresion> list )
+    public Message(Expresion v, int l, int c, ArrayList<Expresion> list )
     {
         this.valor = v;
         this.linea = l;
@@ -38,7 +42,7 @@ public class Imprimir implements Instruccion
         this.listaValores = list;
     }
     
-    public Imprimir(Expresion v, boolean s, int l, int c)
+    public Message(Expresion v, boolean s, int l, int c)
     {
         this.valor = v;
         this.linea = l;
@@ -50,6 +54,8 @@ public class Imprimir implements Instruccion
     public Object ejectuar(Entorno entorno) 
     {
         Object exp = valor.getValor(entorno);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+        LocalDateTime now = LocalDateTime.now();  
         //System.out.println(exp);        
         if(entorno.ventana!=null)
         {
@@ -253,7 +259,8 @@ public class Imprimir implements Instruccion
                             }
                             cadena += parteCadena;
                         }
-                        
+                        LocalDateTime despues = LocalDateTime.now(); 
+                        System.out.println(despues +"\n"+now);
                         Imprimir(entorno,cadena);
                     }
                     else
@@ -273,16 +280,7 @@ public class Imprimir implements Instruccion
     
     public void Imprimir(Entorno e, String c)
     {
-        if(salto)
-        {
-            e.ventana.ImprimirLn(c);
-            System.out.println(c);
-        }
-        else
-        {
-            e.ventana.Imprimir(c);
-            System.out.print(c);
-        }
+        JOptionPane.showMessageDialog(null, "Mensaje", c, 0);
     }
 
     @Override

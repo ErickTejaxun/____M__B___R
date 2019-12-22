@@ -102,6 +102,11 @@ public class DeclaracionConstante implements Instruccion
     {        
         Object valor = null;
         /*Verificamos si se le ha asignado un valor inicial.*/
+        if(entorno.getGlobal().obtener(id)!=null)
+        {
+            Utilidades.Singlenton.registrarErrorSemantico(id,"Constante ya declarada", linea, columna);
+            return null;
+        }
         if(expresion!=null)
         {     
             this.tipo = expresion.getTipo();

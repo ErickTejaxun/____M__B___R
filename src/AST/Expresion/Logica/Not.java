@@ -38,7 +38,7 @@ public class Not implements Expresion
             Utilidades.Singlenton.registrarError("Relacional Not", "Operación válida sólo para tipo " + tipo , ErrorC.TipoError.SEMANTICO, linea, columna);            
             return false;            
         }        
-        return !(Boolean)derecha;
+        return !(boolean)derecha;
     }
 
     @Override
