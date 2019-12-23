@@ -22,6 +22,15 @@ public class NodoNario
     public Tipo tipo;
     public int linea, columna;
     
+    public NodoNario(Object valor, Tipo t, int l, int c)
+    {
+        this.valor = valor;
+        this.tipo  = t;
+        this.linea = l;
+        this.columna = c;
+    }
+    
+    
     public NodoNario()
     {
         

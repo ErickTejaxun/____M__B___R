@@ -66,8 +66,9 @@ public class Imprimir implements Instruccion
                     String[] partes =cadenaCompleta.split("%");
                     ArrayList<String> partesFinales = new ArrayList<>();
                     partesFinales.add(partes[0]);
-                    /*Hay que verificar cuales son los % que si son modos de impresión.*/
-                                                
+                                                           
+                    
+                    /*Hay que verificar cuales son los % que si son modos de impresión.*/                                            
                     for(int x = 1 ; x < partes.length; x++)
                     {
                         String cadenaActual = partes[x];
@@ -97,7 +98,22 @@ public class Imprimir implements Instruccion
                                 break;
                         }                            
                     }
-
+                    
+                    /**/
+                    if(partesFinales.size()==1)
+                    {
+                        if(listaValores == null)
+                        {
+                            Imprimir(entorno, partesFinales.get(0));                            
+                        }
+                        else
+                        {
+                            Utilidades.Singlenton.registrarErrorSemantico("Imprimir", "Cadena con formato incorrecto, el número de los parametros no coincide con los valores.", linea, columna);                            
+                        }
+                        return null;
+                    }
+                    
+                    
                     if(partesFinales.size()-1 == listaValores.size())
                     {
                         String cadena = partesFinales.get(0);

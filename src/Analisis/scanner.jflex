@@ -176,7 +176,7 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "_msn"  {return new Symbol(sym.msn, yychar, yyline, yytext());}
 "_copi"  {return new Symbol(sym.tcopi, yychar, yyline, yytext());}
 "zro"  {return new Symbol(sym.tvoid, yychar, yyline, yytext());}
-"_concat"  {return new Symbol(sym.tconcatenar, yychar, yyline, yytext());}
+"_conc"  {return new Symbol(sym.tconcatenar, yychar, yyline, yytext());}
 "_atxt"  {return new Symbol(sym.tatexto, yychar, yyline, yytext());}
 "_anum"  {return new Symbol(sym.taentero, yychar, yyline, yytext());}
 "_adec"  {return new Symbol(sym.tadecimal, yychar, yyline, yytext());}

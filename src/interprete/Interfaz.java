@@ -1667,8 +1667,8 @@ public class Interfaz extends javax.swing.JFrame implements Runnable{
             else{fechaHora+= "  Se han encontrado "+Utilidades.Singlenton.listaErrores.size()+" error(es) durante la ejecución.";}
             reporteCompilacion.setText(fechaHora);                  
         } catch (Exception e) 
-
         {
+            System.err.print(e);
             mostrarErrores();                          
             if(Utilidades.Singlenton.listaErrores.isEmpty()){fechaHora+= "  No se han encontrado errores durante la ejecución.";}
             else{fechaHora+= "  Se han encontrado "+Utilidades.Singlenton.listaErrores.size()+" error(es) durante la ejecución.";}

@@ -58,8 +58,26 @@ public class Instancia implements Expresion
             Utilidades.Singlenton.registrarErrorSemantico(tipo.nombreTipo(),"No se ha encontrado la clase.", linea, columna);
             return null;            
         }
-        Object valor = size.getValor(entorno);
-        Tipo tipoTmp = size.getTipo();
+        Object valor;
+        Tipo tipoTmp = new Tipo(Tipo.TypePrimitive.INT);
+        if(size instanceof Variable)
+        {
+            Variable nombreDeFusion = (Variable)size;
+            String nombreFusion = nombreDeFusion.id;
+            Simbolo s = entorno.obtener(nombreFusion);
+            if(s.rol != Simbolo.Rol.CLASE)
+            {
+                Utilidades.Singlenton.registrarErrorSemantico(tipo.nombreTipo(),"No se ha encontrado la clase.", linea, columna);
+                return null;
+            }
+            Fusion fusionActual = (Fusion)s;
+            valor = fusionActual.listaAtributos.size();            
+        }
+        else
+        {
+            valor = size.getValor(entorno);
+            tipoTmp = size.getTipo();
+        }                        
         if(!tipoTmp.isNumeric())
         {
             Utilidades.Singlenton.registrarErrorSemantico("_reservar","El argumento debe ser de tipo numerico.", linea, columna);

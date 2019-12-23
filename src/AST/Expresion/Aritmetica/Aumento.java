@@ -5,6 +5,8 @@
  */
 package AST.Expresion.Aritmetica;
 
+import AST.Clase.Acceso;
+import AST.Clase.Atributo;
 import AST.Entorno.Entorno;
 import AST.Entorno.Simbolo;
 import AST.Entorno.Tipo;
@@ -80,10 +82,48 @@ public class Aumento implements Expresion
             return 0;
         }
         else
+        if(exp instanceof Acceso)
         {
+            Acceso direccion = (Acceso)exp;            
+            Object tmp = direccion.getValorMemoria(entorno);  
+            Tipo tipoTmp =exp.getTipo();
+            if(tmp==null)
+            {
+                return null;
+            }           
+            if(tipoTmp.isNumeric())
+            {
+                if(!(tmp instanceof Simbolo))
+                {
+                    return null;
+                }
+                Simbolo atributoTmp = (Simbolo)tmp;
+                switch(tipoTmp.typeprimitive)
+                {
+                    case INT:
+                        tipo = new Tipo(INT);
+                        atributoTmp.valor = (int)atributoTmp.valor + 1;
+                        break;
+                    case DOUBLE:
+                        tipo.typeprimitive = DOUBLE;
+                        atributoTmp.valor = (Double)atributoTmp.valor + 1;                        
+                        break;
+                    case CHAR:
+                        tipo.typeprimitive = INT;
+                        atributoTmp.valor = (char)atributoTmp.valor + 1;                        
+                }
+                //simbolo.valor = tmp;
+                return atributoTmp.valor;
+            }
+            else
+            {
+                Utilidades.Singlenton.registrarError("++", "Esta operación solo puede aplicarse a tipos numericos" , ErrorC.TipoError.SEMANTICO, linea, columna);    
+            }
+            return 0;            
+            
+        }            
             Utilidades.Singlenton.registrarError("++", "Esta operación solo puede aplicarse sobre variables" , ErrorC.TipoError.SEMANTICO, linea, columna);
-            return 0;
-        }        
+            return 0;     
     }
 
     @Override

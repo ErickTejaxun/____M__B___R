@@ -94,7 +94,7 @@ public class Bloque implements Instruccion, Runnable
                     }
                     else
                     {
-                        return ((Expresion)nodo).getValor(global);
+                        ((Expresion)nodo).getValor(global);
                     }
                 }
             } catch (InterruptedException ex) 

@@ -1,0 +1,346 @@
+_imp("Iniciando la ejecución del archivo #1");
+
+
+/*Área de prueba de nuestra lista enlazada*/
+
+fusion nodo
+{
+	ent valor;
+	nodo siguiente;
+};
+
+fusion lista 
+{
+	nodo inicio;
+	nodo final;	
+	ent contador;
+};
+
+zro agregarElementoLista(lista l, ent v)
+{
+	nodo nodoNuevo = _reservar(nodo);
+	nodoNuevo.valor = v;
+	if(l.inicio == nlo)
+	{
+		l.inicio = nodoNuevo;
+		l.final = nodoNuevo;	
+	}
+	l.contador++;
+}
+
+
+zro agregarElemento(nodo node, ent valor)
+{
+
+	nodo nuevo = _reservar(nodo);
+	nuevo.valor = valor;	
+	nodo tmp = node;	
+	while(tmp.siguiente <> nlo)
+	{		
+		_imp("Valor :\t%e",tmp.valor);
+		tmp = tmp.siguiente;
+	}
+	tmp.siguiente = nuevo;
+}
+
+zro recorrerLista(nodo node)
+{
+	nodo tmp = node;
+	ent contador = 0;
+	while(tmp <> nlo)
+	{		
+		_imp("Valor %e :\t%e",contador,tmp.valor);
+		contador++;
+		//_im("siguiente:");
+		tmp = tmp.siguiente;
+	}
+	
+}
+
+_imp("Iniciando nuestra lista");
+nodo inicio = _reservar(nodo);
+inicio.valor = 3*10;
+agregarElemento(inicio,1);
+agregarElemento(inicio,2);
+recorrerLista(inicio);
+
+/*
+if(inicio == nlo )
+{
+	_imp("Nuestro nodo es nulo");
+}
+else
+{
+	_imp("Nuestro nodo NO es nulo y el valor es de %e",inicio.siguiente.valor);
+}*/
+_imp("Nuestro nodo ha sido inicializado");
+
+
+
+
+
+
+ent varA = 10;
+ent varB = 3;
+#definir constante 20 
+ent unaSuma()
+{
+     ent varC = varA + varB;
+     regresar varC;
+}
+
+chr[] voltear(chr a[]){
+
+	ent size = _pesode(a);
+	ent index1 = size - 1;
+	ent index2; // 0
+	chr retorno[size];
+
+	while (index1 >= 0){
+		_imp("a[%e] = %c",index1,a[index1]);
+		retorno[index2] = a[index1];
+		index1--;
+		index2++;
+	}
+	// ej: "abc" -> "cba"
+	regresar retorno;
+
+}
+
+
+#definir constante2 260 
+_imp("false \t== %b", !true || !!true);
+_imp("una suma = %e", unaSuma());
+varB--;
+_imp("una suma = %e", unaSuma());
+
+fusion persona {
+	ent edad;
+	chr nombre[20] = "erick tejaxun";
+	persona siguiente;
+	bul activo;
+};
+
+_imp("constante2 = %d",constante2);
+persona p1 = _reservar(_pesode(persona)*1.5); 
+p1.edad = 200;
+//p1.nombre[0] = 'P';
+_imp("Tamaño estructura \t %e ", _pesode(persona));
+_imp("Edad de la persona \t %e ", p1.edad);
+p1.edad = 200*3.0;
+_imp("Edad de la persona \t %e ", p1.edad);
+p1.nombre = "juan carlos";
+_copi(p1.nombre, "juan carlos");
+_imp("nombre de p1: \t %s ", p1.nombre); 
+dec constante_por_dos(){
+	regresar constante * 2;
+}
+
+
+ent multiplicar(ent a, ent b){
+	
+	if (b == 1){
+		regresar a;
+	}
+	regresar a + multiplicar(a, b-1);
+}
+
+_imp("Resultado: 10*20 = %e " , multiplicar(15,20));
+_imp("Valor constante = %e " , constante_por_dos());
+
+
+chr mensaje[8] = "erick tejaxun";
+_imp("mensaje:\t%s",mensaje);
+
+dec id[4] = {2^3,2,3,4,5};
+chr id_3[] =  {'s','i'};
+chr id_4[2] = {'n','i'};
+ent x = 10*20; 
+dec id2[10 +27]; 
+ _imp("%e - %d - %d - %d ",x,id2[35+1],id[2],id[3]);
+ _imp("%c -- %c",id_4[1],id_4[0]);
+ _imp("%c -- %c",id_3[0],id_3[1]);
+
+_imp("holass %f %e %d %c %b --%b",'a'*2,'b',980,66,35+2);
+dec v1 = 100 + 4.9 ;
+v1 = v1*10;
+dec v2 = 17.8 +'a';
+dec v3 = 2.5 + 2.5;
+ent v4 = 8 + 'a';
+_imp("104.9 == %d " , v1);
+_imp("114.8 == %d " ,v2 );
+_imp("5.0 == %d ", v3);
+_imp("105 == %e ", v4);
+_imp("25 == %e ", 10 +15);
+_imp("194 == %e ", 'a'+'a');
+_imp("6.5 == %d", 8-1.5);
+_imp("102.0 == %d",200.0 -'b');
+_imp("0 == %d ", 3.5-3.5);
+_imp("-5 == %e",95-'d');
+_imp("40 == %e",50-10);
+_imp(" %d == 1550.72", 10.25 * 12.3);
+_imp(" %d == 80.4",20.1 * 5 );
+_imp(" %d == 240.0", 2.5 * 'b' );
+_imp(" %d == 29.75",3.5 * 8.5  );
+_imp(" %e == 194",2 * 'a' );
+_imp(" %e == -300", 'd' * -3 );
+_imp(" %d == 3.0", 15 / 5.0);
+_imp(" %d == 2.083",250.0/ 'x' );
+_imp(" %e == 1",3 / 2  );
+_imp(" %e == 12",'a' / 8 );
+_imp(" %e == 32", 2^5  );
+_imp(" %e == 9409", 'a'^2 );
+_imp(" %d == 2.0", 16 % 3.5 );
+_imp(" %d == 2.5",'a' % 94.5 );
+_imp(" %d == 0.3", 10.5 % 3.4 );
+_imp(" %e == 1",10 % 3 );
+_imp(" %e == 98", 'b' % 100 );
+_imp("1 %b == false",  15 < 10 );
+_imp("2 %b == false", 4.5 < 3 );
+_imp("3 %b == false", 50.58 >= 'b' );
+_imp("4 %b == true",'b' <= 107 );
+_imp("5 %b == true", 'a' <= 100);
+_imp("6 %b == true", 200.25 > 52.2);
+_imp("7 %b == true", 0 <= 0);
+_imp("8 %b == false", 'a' < 'a' );
+_imp("9 %b == true ó false", nlo <> nlo);
+_imp("10 %b == true", 50 == 50.0);
+_imp("11 %b == true", 5.5 <> 30);
+_imp("12 %b == true", 'a' == 'a');
+_imp("13 %b == false", 1.2 <> 1.2);
+_imp("14 %b == true", true == true);
+_imp("15 %b == false", true <> true);
+chr cadena[10] = "hola mundo" ;
+_imp(" cadena :\t %s", cadena);
+ent miArrydeArray [2][2]; 
+_imp("%e ", miArrydeArray[1][1]);
+ent valores[2][2][3]; 
+_imp("%b ",valores[1][1][2]);
+ent valores2[][][] = {{{1,2,3},{4,5,6}},{{7,8,9},{10,11,12}}};
+_imp("%e ", valores2[1][1][2]);
+chr a[2][2] = {{'1','5'},{'3','4'}};
+_imp("%c",a[0][1]);
+chr b[2] = a[0];
+chr z[] = "arreglo de caracteres";
+ent bx = z[1];
+_imp("%c ---- ", bx);
+
+
+
+/*Metodos recursivos*/
+
+ent ackermann(ent m, ent n) {
+   if (m == 0) {
+       regresar (n + 1);
+   } else if (m > 0 && n == 0) {
+       regresar ackermann(m - 1, 1);
+   } else {
+       regresar ackermann(m - 1, ackermann(m, n - 1));
+   }
+}
+
+zro mostrarAckerman(ent a, ent b)
+{
+	_imp("ackerman(%e,%e) == %e",a,b,ackermann(a,b));
+	//_msn("ackerman(%e,%e) == %e",a,b,ackermann(a,b));
+}
+
+ent a = 3;
+for(ent b = 1; b < 7 ; b++)
+{
+	mostrarAckerman(a,b);
+}
+zro bienvenida(chr a[]){
+	
+	_imp("hola %s",a); 
+	_imp("\n");
+
+}
+
+chr mensaje2[25] = "Bienvenido a la calificacion";
+bienvenida(mensaje2);
+mostrarAckerman(3,3);
+
+
+lista miLista = _reservar(_pesode(lista));
+miLista.contador = 4^2;
+agregarElemento(miLista, 3);
+
+
+
+
+_imp(".-------------------------------------");
+//bienvenida(30);
+
+
+
+
+
+//_imp("Iniciando la ejecución del archivo #1");
+
+
+/*Área de prueba de nuestra lista enlazada*/
+
+
+
+fusion nodo
+{
+	ent valor;
+	nodo siguiente;
+};
+
+fusion lista 
+{
+	nodo inicio;
+	nodo final;	
+	ent contador;
+};
+
+zro agregarElementoLista(lista l, ent v)
+{
+	nodo nodoNuevo = _reservar(nodo);
+	nodoNuevo.valor = v;
+	if (l.inicio == nlo)
+	{
+		_imp("Iniciando lista");
+		l.inicio = nodoNuevo;
+		l.final = nodoNuevo;	
+	}
+	else
+	{
+		_imp("lista no vacía");
+		nodo tmp = l.inicio;
+		nodo tmp2 = tmp.siguiente;
+		while(tmp2 <> nlo )
+		{			
+			tmp = tmp2;
+			tmp2 = tmp2.siguiente;			
+		}		
+		tmp.siguiente = nodoNuevo;
+		l.final = nodoNuevo;		
+	}
+	l.contador++;
+}
+
+zro recorrerLista(lista l)
+{
+	_imp("La lista tiene %e elementos",l.contador);
+	if(l.inicio <> nlo )
+	{	
+		ent cont = _pesode(nodo);
+		nodo tmp = l.inicio;		
+		while(tmp <> nlo )
+		{
+			_imp("Valor:\t%e",tmp.valor);
+			tmp = tmp.siguiente;
+		}
+	}
+}
+lista milista = _reservar(lista);
+agregarElementoLista(milista, 1);
+agregarElementoLista(milista, 2);
+agregarElementoLista(milista, 3);
+agregarElementoLista(milista, 4);
+agregarElementoLista(milista, 5);
+recorrerLista(milista);
+_imp("Fin de la ejecucion, perros");

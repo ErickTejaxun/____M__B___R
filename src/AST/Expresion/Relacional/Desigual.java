@@ -5,6 +5,7 @@
  */
 package AST.Expresion.Relacional;
 
+import AST.Clase.Acceso;
 import AST.Entorno.Entorno;
 import AST.Entorno.Tipo;
 import static AST.Entorno.Tipo.TypePrimitive.BOOL;
@@ -33,8 +34,26 @@ public class Desigual implements Expresion
     @Override
     public Object getValor(Entorno ent) 
     {       
-        Object derecha = opd.getValor(ent);
-        Object izquierda = opi.getValor(ent);
+        Object derecha = null;// = opd.getValor(ent);
+        Object izquierda = null;// = opi.getValor(ent);
+        if(opd instanceof Acceso)
+        {
+            Acceso accesoDerecha = (Acceso)opd;
+            derecha = accesoDerecha.getValorMemoria(ent);
+        }
+        else
+        {
+            derecha = opd.getValor(ent);
+        }
+        if(opi instanceof Acceso)
+        {
+            Acceso accesoDerecha = (Acceso)opi;
+            izquierda = accesoDerecha.getValorMemoria(ent);
+        }        
+        else
+        {
+            izquierda = opi.getValor(ent);
+        }
         tipo = new Tipo("");
         tipo.typeprimitive = BOOL;
         if(derecha==null && izquierda==null)

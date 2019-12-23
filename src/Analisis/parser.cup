@@ -188,6 +188,7 @@ non terminal Retorno RETORNO;
 non terminal Llamada LLAMADA;
 non terminal String MODATRIB;
 non terminal ArrayList<Expresion> PARACTUALES,ACTUALES;
+non terminal Concatenar CONCATENAR;
 
 /*Atributos de clase*/
 /*non terminal ArrayList<String> LMODATRIB;*/
@@ -204,21 +205,24 @@ non terminal Expresion INSTANCIA;
 non terminal Expresion VALORASIGNACION;
 non terminal Importar IMPORTAR;
 
-/*
-precedence left interrogante, punto;
+
+/*precedence left interrogante, punto;*/
 precedence left or;
 precedence left and;
 precedence left xor;
 precedence left igualigual, desigual;
-precedence left menor, mayor, mayorigual, menorigual, instanceof_;
+precedence left menor, mayor, mayorigual, menorigual;
 precedence left suma, menos;
 precedence left multi, div, modulo;
-precedence left not;
+precedence left potencia;
 precedence left aumento, decremento ;
-*/
-
-
 precedence left not;
+precedence left interrogante;
+precedence nonassoc pard , pari;
+precedence nonassoc corcheted , corchetei;
+/*
+precedence left not;
+precedence nonassoc aumento, decremento, not;
 precedence right interrogante, dospuntos;
 precedence left or;
 precedence left and;
@@ -229,11 +233,10 @@ precedence left suma, menos;
 precedence left div, multi, modulo;
 precedence left potencia;
 precedence right nuevo;
-precedence nonassoc aumento, decremento, not;
 precedence nonassoc pard , pari;
 precedence nonassoc corcheted , corchetei;
 precedence left punto;
-
+*/
 start with INICIO;
 
 INICIO ::= LINST:lista {: Imprimir("Correcto"); raiz = new AST(lista);; :}		
@@ -262,6 +265,9 @@ INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |CONTINUE:inst puntocoma {:RESULT = inst;:}
        |SWITCH:inst {:RESULT = inst;:}
        |DECLARACIONCONSTANTE:inst {:RESULT = inst;:}
+       |AUMENTO:inst puntocoma{:RESULT =inst;:}
+       |DECREMENTO:inst puntocoma{:RESULT =inst;:}
+       |CONCATENAR:inst puntocoma{:RESULT =inst;:}
        |error
 ;
 
@@ -425,8 +431,8 @@ ASIG::= ACCESO:origen igual VALORASIGNACION:valor
        
 ;
 
-/*ASIGV::= id:id LEXP:coordenas igual EXP:valor {: RESULT = new AsignacionVector(id, coordenas, valor,  idright,idleft);:}
-;*/
+ASIGV::= id:id LEXP:coordenas igual EXP:valor {: RESULT = new AsignacionVector(id, coordenas, valor,  idright,idleft);:}
+;
 
 
 VALORASIGNACION::= 
@@ -532,17 +538,23 @@ EXP::=
         |caracter:v {: RESULT = new Literal(new Tipo(Tipo.TypePrimitive.CHAR), v, vright,vleft);:}
         /*ACCESO*/
         |ACCESO:v {:RESULT = v;:}
+        |multi ACCESO:v {:RESULT = v;:}
         |pari EXP:op pard {: RESULT = op;:}
+        |tatexto:t pari EXP:expresion pard {: RESULT = new aTexto(expresion, tright, tleft);:}
         /*|EXPLICITCAST:exp {:RESULT = exp;:}*/
         | nulo:r {:RESULT = new Literal(new Tipo(Tipo.TypePrimitive.NULO), null, rright, rleft);:} 
         | tpeso:t pari id:nombre pard {: RESULT = new Peso(nombre,tright, tleft );:}
+        | CONCATENAR:v {:RESULT = v;:}
 ;
 
-AUMENTO::= EXP:op aumento {:RESULT = new Aumento(op, opright, opleft);:}
-          |aumento EXP:op {:RESULT = new Preaumento(op, opright, opleft);:}       
+CONCATENAR::= tconcatenar:t pari EXP:exp1 coma EXP:exp2 pard {:RESULT = new Concatenar(exp1,exp2,tright,tleft);:}
+;
+
+AUMENTO::= ACCESO:op aumento {:RESULT = new Aumento(op, opright, opleft);:}
+          /*|aumento EXP:op {:RESULT = new Preaumento(op, opright, opleft);:}       */
             ;
-DECREMENTO::= EXP:op decremento {:RESULT = new Decremento(op, opright, opleft);:}
-              |decremento EXP:op {:RESULT = new Predecremento(op, opright, opleft);:}
+DECREMENTO::= ACCESO:op decremento {:RESULT = new Decremento(op, opright, opleft);:}
+              /*|decremento EXP:op {:RESULT = new Predecremento(op, opright, opleft);:}*/
 ;
 
 ACCESO::= ACCESO:origen punto ORIGEN:destino {: RESULT = new Acceso(origen, destino, origenright, origenleft);:}

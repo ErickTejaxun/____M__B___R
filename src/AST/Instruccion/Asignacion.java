@@ -6,6 +6,7 @@
 package AST.Instruccion;
 
 import AST.Clase.Acceso;
+import AST.Clase.Instancia;
 import AST.Clase.Objeto;
 import AST.Entorno.Simbolo;
 import AST.Expresion.Expresion;
@@ -54,7 +55,13 @@ public class Asignacion implements Instruccion
     public Object ejectuar(Entorno entorno) 
     {        
         //Simbolo simbolo = entorno.obtener(this.id);
-        Simbolo simbolo = null;   
+        Simbolo simbolo = null;  
+        if(expresion instanceof Instancia)
+        {
+            Instancia instanciaTmp = (Instancia)expresion;
+            Object tmpDestino = destino.getValor(entorno);
+            instanciaTmp.tipo = destino.getTipo();
+        }
         if(destino instanceof Simbolo)
         {
             Simbolo simboloTmp = (Simbolo)destino;

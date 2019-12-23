@@ -64,7 +64,8 @@ public class Fusion extends Simbolo implements Instruccion, Expresion
     @Override
     public Object ejectuar(Entorno entorno) 
     {
-        /*Tenemos que ir a tomar todas las */        
+        /*Tenemos que ir a tomar todas las */
+        this.rol = CLASE;
         entorno.insertar(this);
         return this;
     }

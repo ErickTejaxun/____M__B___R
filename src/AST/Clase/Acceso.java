@@ -100,6 +100,58 @@ public class Acceso implements Expresion
         return tipo;
     }
 
+    public Object getValorMemoria(Entorno ent) 
+    {
+        Object originData = origen.getValor(ent);
+        if(originData instanceof Arreglo)
+        {
+            if(nombreAtributo==null)
+            {
+                nombreAtributo ="";
+                if(destino instanceof Variable)
+                {
+                    Variable var = (Variable)destino;
+                    nombreAtributo = var.id;
+                    tipo = var.tipo;
+                }
+            }
+            if(nombreAtributo.equals("length"))
+            {
+                Arreglo arr = (Arreglo)originData;  
+                tipo = new Tipo(INT);
+                return arr.getSize();
+            }
+        } 
+        else if(originData instanceof Objeto)
+        {
+            Objeto instancia = (Objeto)originData;
+            //Simbolo atributo = instancia.entornoObjeto.obtener(nombreAtributo);
+            Object valorAtributo =  null;
+            if(destino instanceof Variable)
+            {
+                Variable var = (Variable)destino;
+                valorAtributo = instancia.entornoObjeto.tabla.get(var.id);
+                Utilidades.Singlenton.setVariable(var.id);
+            }              
+            Simbolo atributo = null;            
+            if(valorAtributo instanceof Simbolo){ atributo = (Simbolo)valorAtributo;}
+            
+            if(atributo==null)
+            {
+                Utilidades.Singlenton.registrarError(Utilidades.Singlenton.nombreVariable,"El atributo no pertenece a la clase "+instancia.claseCreadora, ErrorC.TipoError.SEMANTICO, linea,columna);
+            }
+            else
+            {
+                tipo = atributo.tipo;
+                return atributo;
+            }
+            /*Buscamos el atributo*/
+            
+        }
+        return null;
+    }    
+    
+    
     @Override
     public int linea() {
         return linea;

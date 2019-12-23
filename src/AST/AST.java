@@ -64,7 +64,7 @@ public class AST
             }
             else if (nodo instanceof Expresion)
             {
-                return ((Expresion) nodo).getValor(entorno);
+                ((Expresion) nodo).getValor(entorno);
             }            
         }               
         return null;

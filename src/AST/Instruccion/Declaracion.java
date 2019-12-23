@@ -106,7 +106,7 @@ public class Declaracion implements Instruccion
         {                                   
             if(expresion instanceof Instancia)
             {
-                Instancia e = (Instancia)expresion;
+                Instancia e = (Instancia)expresion;                
                 e.setTipo(tipo);
             }
             
@@ -310,8 +310,15 @@ public class Declaracion implements Instruccion
                         Utilidades.Singlenton.registrarErrorSemantico("Advertencia: "+id+": Dimensión "+x, "No coinciden los tamaños de las dimensiones con el valor a asignar.", linea, columna);                                                
                         ArrayList<NodoNario> listaNueva = new ArrayList<NodoNario>();
                         for(int y = 0; y< tamañoDimension; y++)
-                        {                                                 
-                            listaNueva.add(nodoTmp.hijos.get(y));
+                        {      
+                            if(y < nodoTmp.hijos.size())
+                            {
+                                listaNueva.add(nodoTmp.hijos.get(y));
+                            }
+                            else
+                            {
+                                listaNueva.add(new NodoNario('\0',new Tipo(CHAR),linea,columna));
+                            }                            
                         }
                         nodoTmp.hijos = listaNueva;
                     }                    
