@@ -41,21 +41,20 @@ public class While implements Instruccion
         {
             while((boolean)condicional)
             {
-                Object resultado = instrucciones.ejectuar(local);
-                if(resultado!=null){return resultado;}
-                /*if(resultado instanceof Break)
+                Object resultado = instrucciones.ejectuar(local);                                
+                if(resultado instanceof Break)
                 {
                     break;
-                }
+                }else
                 if(resultado instanceof Continuar)
                 {
                     continue;
-                }
+                }else
                 if(resultado instanceof Continuar)
                 {
                     continue;
-                }*/               
-                
+                }else
+                if(resultado!=null){return resultado;}
                 condicional = condicion.getValor(entorno);
             }
         }

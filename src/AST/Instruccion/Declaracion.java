@@ -15,7 +15,6 @@ import static AST.Entorno.Tipo.TypePrimitive.CHAR;
 import AST.Expresion.Arreglo.Arreglo;
 import AST.Expresion.Arreglo.ExpresionArreglo;
 import AST.Expresion.Arreglo.NodoNario;
-import AST.Expresion.Literal;
 import Utilidades.ErrorC;
 import java.util.ArrayList;
 

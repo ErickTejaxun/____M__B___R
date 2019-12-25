@@ -168,8 +168,6 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "nlo"  {return new Symbol(sym.nulo, yychar, yyline, yytext());}
 "#definir"  {return new Symbol(sym.tdefinir, yychar, yyline, yytext());}
 "importar" {return new Symbol(sym.importar, yychar, yyline, yytext());}
-{si} {return new Symbol(sym.si, yychar, yyline, yytext());}
-{sino} {return new Symbol(sym.sino, yychar, yyline, yytext());}
 "regresar" {return new Symbol(sym.retorno, yychar, yyline, yytext());}
 "fusion"   {return new Symbol(sym.tfusion, yychar, yyline, yytext());}
 "_imp"  {return new Symbol(sym.print, yychar, yyline, yytext());}
@@ -178,11 +176,11 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "zro"  {return new Symbol(sym.tvoid, yychar, yyline, yytext());}
 "_conc"  {return new Symbol(sym.tconcatenar, yychar, yyline, yytext());}
 "_atxt"  {return new Symbol(sym.tatexto, yychar, yyline, yytext());}
-"_anum"  {return new Symbol(sym.taentero, yychar, yyline, yytext());}
+"_aent"  {return new Symbol(sym.taentero, yychar, yyline, yytext());}
 "_adec"  {return new Symbol(sym.tadecimal, yychar, yyline, yytext());}
 "_pesode"  {return new Symbol(sym.tpeso, yychar, yyline, yytext());}
 "_reservar"  {return new Symbol(sym.treservar, yychar, yyline, yytext());}
-"_eql"  {return new Symbol(sym.teql, yychar, yyline, yytext());}
+"_eqls"  {return new Symbol(sym.teql, yychar, yyline, yytext());}
 "_write"  {return new Symbol(sym.twrite, yychar, yyline, yytext());}
 "_wf"  {return new Symbol(sym.twriteend, yychar, yyline, yytext());}
 "_close"  {return new Symbol(sym.tclose, yychar, yyline, yytext());}
@@ -199,13 +197,16 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "romper"    {return new Symbol(sym.romper, yychar, yyline, yytext());}
 "siga"    {return new Symbol(sym.continuar, yychar, yyline, yytext());}
 "repeat"    {return new Symbol(sym.hacer, yychar, yyline, yytext());}
-
+"default"    {return new Symbol(sym.defecto, yychar, yyline, yytext());}
+{si} {return new Symbol(sym.si, yychar, yyline, yytext());}
+{sino} {return new Symbol(sym.sino, yychar, yyline, yytext());}
 
 "++"   {return new Symbol(sym.aumento, yychar, yyline, yytext());}
 "--"   {return new Symbol(sym.decremento, yychar, yyline, yytext());}
 
 /*Palabras reservadas*/
 ";"   {return new Symbol(sym.puntocoma, yychar, yyline, yytext());}
+":"   {return new Symbol(sym.dospuntos, yychar, yyline, yytext());}
 ","   {return new Symbol(sym.coma, yychar, yyline, yytext());}
 "."   {return new Symbol(sym.punto, yychar, yyline, yytext());}
 "=="  {return new Symbol(sym.igualigual, yychar, yyline, yytext());}

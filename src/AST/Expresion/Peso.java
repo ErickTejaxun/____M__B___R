@@ -6,10 +6,12 @@
 package AST.Expresion;
 
 import AST.Clase.Fusion;
+import AST.Clase.Objeto;
 import AST.Entorno.Entorno;
 import AST.Entorno.Simbolo;
 import AST.Entorno.Tipo;
 import static AST.Entorno.Tipo.TypePrimitive.INT;
+import AST.Expresion.Arreglo.Arreglo;
 
 /**
  *
@@ -30,18 +32,37 @@ public class Peso implements Expresion
     @Override
     public Object getValor(Entorno ent) 
     {
-        Simbolo simboloF = ent.obtener(nombre);
-        if(simboloF==null)
+        Simbolo simboloBuscado = ent.obtener(nombre);
+        if(simboloBuscado==null)
         {
             Utilidades.Singlenton.registrarErrorSemantico(nombre, "Estructura no encontrada.", linea, columna);
             return null;
         }
-        if(simboloF.rol != Simbolo.Rol.CLASE)
+        
+        /*Caso 1, arreglos. Se devuelve el número de dimensiones*/
+        if(simboloBuscado.rol == Simbolo.Rol.VAR)
         {
-            Utilidades.Singlenton.registrarErrorSemantico(nombre, "No es una estructura", linea, columna);
-            return null;            
+            if(simboloBuscado.tipo.isPrimitivo())
+            {
+                return 1;
+            }
+            else
+            {
+                if(simboloBuscado instanceof Objeto)
+                {
+                    Objeto obtTmp = (Objeto)simboloBuscado;
+                    return obtTmp.listaAtributos.size();
+                }
+            }
         }
-        Fusion fusionTmp = (Fusion)simboloF;
+                        
+        if(simboloBuscado.rol == Simbolo.Rol.ARREGLO)
+        {
+            Arreglo arreglo = (Arreglo)(simboloBuscado.valor);
+            return arreglo.tamaniosDimensiones.size();
+        }
+        
+        Fusion fusionTmp = (Fusion)simboloBuscado;
         return fusionTmp.listaAtributos.size();                
     }
 

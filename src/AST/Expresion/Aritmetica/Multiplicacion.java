@@ -10,6 +10,7 @@ import AST.Entorno.Tipo;
 import static AST.Entorno.Tipo.TypePrimitive.*;
 import AST.Expresion.Expresion;
 import Utilidades.ErrorC;
+import java.text.DecimalFormat;
 
 /**
  *
@@ -41,19 +42,34 @@ public class Multiplicacion implements Expresion
         {
             switch(tipo.typeprimitive)
             {
-                case DOUBLE:
+                case DOUBLE:                    
+                    Tipo tipoi = operadori.getTipo();
+                    Tipo tipod = operadord.getTipo();
+
                     if(operadori.getTipo().typeprimitive == CHAR)
                     {
-                        valor = (char)valori * (Double)valord;
+                        valor = (char)valori * (double)valord;
                     }
                     else
                     if(operadord.getTipo().typeprimitive == CHAR)
                     {
-                        valor = (Double)valori * (char)valord;
+                        valor = (double)valori * (char)valord;
+                    }
+                    else 
+                    if(tipoi.isInt())
+                    {
+                       valor = (int)valori + (double)valord;
+                    }
+                    else 
+                    if(tipod.isInt())
+                    {
+                        valor = (double)valori * (int)valord;
                     }
                     else
                     {
-                        valor = Double.parseDouble(valori.toString()) * Double.parseDouble(valord.toString());
+                        
+                        //valor = Double.parseDouble(valori.toString()) * Double.parseDouble(valord.toString());
+                        valor = (double)valori * (double)valord;
                     }                                        
                 break;
                 case INT:
@@ -77,6 +93,13 @@ public class Multiplicacion implements Expresion
         else
         {
             Utilidades.Singlenton.registrarError("Multiplicación", "No se puede operar tipos " + operadori.getTipo() + " * " +operadord.getTipo() , ErrorC.TipoError.SEMANTICO, linea, columna);
+        }
+        if(valor instanceof Double)
+        {
+            double tmp = (double)valor;
+            DecimalFormat df = new DecimalFormat("#.#####");
+            String cad = df.format(tmp);
+            valor = Double.parseDouble(cad);
         }
         return valor;
     }
