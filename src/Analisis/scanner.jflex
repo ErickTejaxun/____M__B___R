@@ -189,7 +189,8 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "||"   {return new Symbol(sym.or, yychar, yyline, yytext());}
 /*Palabras reservadas de sentencias de control*/
 "while"  {return new Symbol(sym.mientras, yychar, yyline, yytext());}
-"hacer"     {return new Symbol(sym.hacer, yychar, yyline, yytext());}
+"repeat"     {return new Symbol(sym.hacer, yychar, yyline, yytext());}
+"when"     {return new Symbol(sym.donde, yychar, yyline, yytext());}
 "for"      {return new Symbol(sym.para, yychar, yyline, yytext());}
 "repetir"   {return new Symbol(sym.repetir, yychar, yyline, yytext());}
 "switch"    {return new Symbol(sym.switch_, yychar, yyline, yytext());}
@@ -198,6 +199,9 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "siga"    {return new Symbol(sym.continuar, yychar, yyline, yytext());}
 "repeat"    {return new Symbol(sym.hacer, yychar, yyline, yytext());}
 "default"    {return new Symbol(sym.defecto, yychar, yyline, yytext());}
+"_write"    {return new Symbol(sym.escritura, yychar, yyline, yytext());}
+"_wf"    {return new Symbol(sym.escribir, yychar, yyline, yytext());}
+"_close"    {return new Symbol(sym.cerrar, yychar, yyline, yytext());}
 {si} {return new Symbol(sym.si, yychar, yyline, yytext());}
 {sino} {return new Symbol(sym.sino, yychar, yyline, yytext());}
 

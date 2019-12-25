@@ -51,6 +51,7 @@ public class DoWhile implements Instruccion
                 {
                     continue;
                 }
+                if(resultado!=null){return resultado;}
                 condicional = condicion.getValor(entorno);                
             }
             while((boolean)condicional);

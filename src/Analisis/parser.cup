@@ -125,7 +125,7 @@ parser code
 
 terminal String tint, tdouble, tchar, tbool, tstring, puntocoma, llavei, llaved, pari, pard, id, corchetei, corcheted, igual, print, println, coma;
 terminal String igualigual, desigual, mayor, menor, menorigual, mayorigual, potencia , tvoid, nulo, tcomodin;
-terminal String abstracto, caso, cat, clase, defecto, hacer, extiende, final_, graph,msn;
+terminal String abstracto, caso, cat, clase, defecto, hacer, extiende, final_, graph,msn, donde, escribir, escritura, cerrar;
 terminal String importar, instanceof_, nuevo, privado, protegido, publico, retorno, tcopi;
 
 /*Palabras reservadas :v*/
@@ -204,6 +204,7 @@ non terminal Expresion ACCESO, ORIGEN;
 non terminal Expresion INSTANCIA;
 non terminal Expresion VALORASIGNACION;
 non terminal Importar IMPORTAR;
+non terminal Escribir 
 
 
 /*precedence left interrogante, punto;*/
@@ -711,7 +712,7 @@ CASO::= caso:i EXP:condicion dospuntos LINST:linst {:RESULT = new Caso(condicion
 DEFECTO::= defecto:i dospuntos LINST:linst {:RESULT = new Caso(null,new Bloque(linst,linstright,linstleft),iright,ileft);:}
 ;
 
-DOWHILE::=  hacer:i BLOQUE:bloque mientras:inst pari EXP:condicion pard puntocoma
+DOWHILE::=  hacer:i BLOQUE:bloque donde:inst pari EXP:condicion pard 
         {:
             RESULT = new DoWhile(condicion, bloque, iright, ileft);
         :}

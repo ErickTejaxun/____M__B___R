@@ -34,6 +34,22 @@ public class Singlenton
     public static int contadorMain = 0;
     public static String pathMainSeleccionado = "";
     
+    public static String pathWrite ="";
+    
+    
+    public static void setPathWrite(String s)
+    {
+        pathWrite = s;        
+    }
+    public static void cerrarWrite()
+    {
+        pathWrite = "";
+    }
+    
+    public static void writeLinea(String s)
+    {
+        
+    }
     
     
     public static void addPunto(GutterIconInfo p)
