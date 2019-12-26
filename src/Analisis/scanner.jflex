@@ -162,8 +162,8 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "chr"  {return new Symbol(sym.tchar, yychar, yyline, yytext());}
 "bul"   {return new Symbol(sym.tbool, yychar, yyline, yytext());} 
 "nlo"  {return new Symbol(sym.nulo, yychar, yyline, yytext());}
-"#definir"  {return new Symbol(sym.tdefinir, yychar, yyline, yytext());}
-"importar" {return new Symbol(sym.importar, yychar, yyline, yytext());}
+"#definir"  {return new Symbol(sym.tdefinir, yychar, yyline, yytext()); }
+"#importar" {return new Symbol(sym.importar, yychar, yyline, yytext());}
 "regresar" {return new Symbol(sym.retorno, yychar, yyline, yytext());}
 "fusion"   {return new Symbol(sym.tfusion, yychar, yyline, yytext());}
 "_imp"  {return new Symbol(sym.print, yychar, yyline, yytext());}

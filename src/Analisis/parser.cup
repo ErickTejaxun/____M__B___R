@@ -125,7 +125,7 @@ parser code
 
 
 terminal String tint, tdouble, tchar, tbool, tstring, puntocoma, llavei, llaved, pari, pard, id, corchetei, corcheted, igual, print, println, coma;
-terminal String igualigual, desigual, mayor, menor, menorigual, mayorigual, potencia , tvoid, nulo, tcomodin;
+terminal String igualigual, desigual, mayor, menor, menorigual, mayorigual, potencia , tvoid, nulo, tcomodin, tread;
 terminal String abstracto, caso, cat, clase, defecto, hacer, extiende, final_, graph,msn, donde, escribir, escritura, cerrar;
 terminal String importar, instanceof_, nuevo, privado, protegido, publico, retorno, tcopi, tapend;
 
@@ -144,7 +144,7 @@ terminal double decimal;
 terminal boolean booleano;
 
 non terminal Bloque BLOQUE;
-non terminal ArrayList<Nodo> LINST;
+non terminal ArrayList<Nodo> LINST, CONSTANTES;
 non terminal Nodo INST;
 non terminal Declaracion DECLARACION;
 non terminal Expresion EXP, AUMENTO, DECREMENTO, EXPLICITCAST;
@@ -246,12 +246,22 @@ precedence left punto;
 start with INICIO
 ;
 
-INICIO ::= LINST:lista {: Imprimir("Correcto"); raiz = new AST(lista);; :}		
+INICIO ::= 
+            CONSTANTES:constantes LINST:lista 
+            {:
+                for(Nodo n: lista)
+                {
+                    constantes.add(n);
+                }  
+                raiz = new AST(constantes);
+            :}
+        |   LINST:lista {: Imprimir("Correcto"); raiz = new AST(lista);; :}
 ;
        
 LINST::= LINST:lista INST:inst {: lista.add(inst); RESULT = lista;:}
-	    |INST:inst {: ArrayList<Nodo> l = new ArrayList<Nodo>(); l.add(inst); RESULT = l;:} 
+	    |INST:inst {: ArrayList<Nodo> l = new ArrayList<Nodo>(); l.add(inst); RESULT = l;:}         
 ;
+
 
 INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |MSN:inst puntocoma {: RESULT = inst;:}
@@ -270,8 +280,7 @@ INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |FOR:inst  {:RESULT = inst;:}
        |BREAK:inst puntocoma {:RESULT = inst;:}
        |CONTINUE:inst puntocoma {:RESULT = inst;:}
-       |SWITCH:inst {:RESULT = inst;:}
-       |DECLARACIONCONSTANTE:inst {:RESULT = inst;:}
+       |SWITCH:inst {:RESULT = inst;:}       
        |AUMENTO:inst puntocoma{:RESULT =inst;:}
        |DECREMENTO:inst puntocoma{:RESULT =inst;:}
        |CONCATENAR:inst puntocoma{:RESULT =inst;:}
@@ -279,11 +288,12 @@ INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |SETAPPEND:inst puntocoma{:RESULT =inst;:}
        |CLOSEARCHIVO:inst puntocoma{:RESULT =inst;:}
        |ESCRIBIR:inst puntocoma{:RESULT =inst;:}
-       |READ:inst puntocoma{:RESULT =inst;:}
+       |READ:inst puntocoma {:RESULT =inst;:}
        |error
 ;
 
-READ::= tread pari EXP:e1 coma EXP:e2 pard {:RESULT = new Read(e1,e2,trigh,tleft);:}
+READ::= tread:t pari EXP:e1 coma cadena:e2 pard {:RESULT = new Read(e1,e2,tright,tleft);:}
+;
 
 CLOSEARCHIVO ::= tclose:t pari pard {:RESULT = new  CerrarArchivo(tright, tleft);:}
 ;
@@ -318,6 +328,12 @@ COPI::= tcopi:t pari EXP:origen coma EXP:destino pard
         RESULT = new Copi(origen, destino, tright, tleft);
         :}
 ;        
+
+CONSTANTES::= CONSTANTES:l DECLARACIONCONSTANTE:inst {: RESULT = l ; RESULT.add(inst);:}
+             |DECLARACIONCONSTANTE:inst {: RESULT  = new ArrayList<Nodo>(); RESULT.add(inst);:}
+             |IMPORTAR:inst {: RESULT  = new ArrayList<Nodo>(); RESULT.add(inst);:}
+;
+
                 /*#definir id 10 */
                 /*#definir id {{1,2},{2,3}} */                
 DECLARACIONCONSTANTE::= tdefinir:t DECCONSTANTE:nombre  
@@ -326,6 +342,9 @@ DECLARACIONCONSTANTE::= tdefinir:t DECCONSTANTE:nombre
             lista.add(nombre);
             RESULT = new DeclaracionConstante(null, lista, tright, tleft); 
         :}
+;
+
+IMPORTAR::= importar:or  cadena:nombre  {:RESULT = new Importar(nombre, orright, orleft);:}
 ;
 
 DECCONSTANTE::=           
@@ -621,7 +640,7 @@ PRIMITIVO ::=
 		|tchar:t {:RESULT =  new Tipo(Tipo.TypePrimitive.CHAR,tright, tleft);:}
         |tdouble:t {:RESULT = new Tipo(Tipo.TypePrimitive.DOUBLE,tright, tleft);:}
 		|tbool:t {:RESULT = new Tipo(Tipo.TypePrimitive.BOOL,tright, tleft);:}
-		/*|tstring:t {:RESULT = new Tipo(Tipo.TypePrimitive.STRING,tright, tleft);:}*/
+		|tstring:t {:RESULT = new Tipo(Tipo.TypePrimitive.STRING,tright, tleft);:}
 ;
 
 

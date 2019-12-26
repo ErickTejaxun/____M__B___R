@@ -155,7 +155,8 @@ public class Singlenton
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-            }          
+            } 
+            return;
        }
        Utilidades.Singlenton.registrarErrorSemantico(pathMainSeleccionado, "El archivo no ha sido encontrado", linea, col);         
     }
