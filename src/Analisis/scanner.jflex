@@ -137,7 +137,8 @@ sinosi={sino}({comentario}|{espacio})*(si)
                 cadena = subcadena;
             break;                                                                                                       
             default:
-                Utilidades.Singlenton.registrarError("\\"+yytext(), "Carácter ilegal. Ha sido eliminado.", ErrorC.TipoError.SEMANTICO,yyline, yychar);
+                cadena += "\\"+yytext();
+                //Utilidades.Singlenton.registrarError("\\"+yytext(), "Carácter ilegal. Ha sido eliminado.", ErrorC.TipoError.SEMANTICO,yyline, yychar);
             break;                
         }
         yybegin(cad1);                  
@@ -150,15 +151,10 @@ sinosi={sino}({comentario}|{espacio})*(si)
 
 {espacio}
 {
-    //Imprimir("Salto de linea");
 }
-
 {comentario} 
 {
-    //Imprimir(yytext());
 }
-
-/*Palabras reservadas*/
 "true" {return new Symbol(sym.booleano,yychar, yyline, true);}
 "false" {return new Symbol(sym.booleano,yychar, yyline, false);}
 "ent"   {return new Symbol(sym.tint, yychar, yyline, yytext());}
@@ -177,17 +173,16 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "_conc"  {return new Symbol(sym.tconcatenar, yychar, yyline, yytext());}
 "_atxt"  {return new Symbol(sym.tatexto, yychar, yyline, yytext());}
 "_aent"  {return new Symbol(sym.taentero, yychar, yyline, yytext());}
+"_apend"  {return new Symbol(sym.tapend, yychar, yyline, yytext());}
 "_adec"  {return new Symbol(sym.tadecimal, yychar, yyline, yytext());}
 "_pesode"  {return new Symbol(sym.tpeso, yychar, yyline, yytext());}
 "_reservar"  {return new Symbol(sym.treservar, yychar, yyline, yytext());}
 "_eqls"  {return new Symbol(sym.teql, yychar, yyline, yytext());}
-"_write"  {return new Symbol(sym.twrite, yychar, yyline, yytext());}
-"_wf"  {return new Symbol(sym.twriteend, yychar, yyline, yytext());}
+"_write"  {return new Symbol(sym.escritura, yychar, yyline, yytext());}
+"_wf"  {return new Symbol(sym.escribir, yychar, yyline, yytext());}
 "_close"  {return new Symbol(sym.tclose, yychar, yyline, yytext());}
-
 "&&"   {return new Symbol(sym.and, yychar, yyline, yytext());}
 "||"   {return new Symbol(sym.or, yychar, yyline, yytext());}
-/*Palabras reservadas de sentencias de control*/
 "while"  {return new Symbol(sym.mientras, yychar, yyline, yytext());}
 "repeat"     {return new Symbol(sym.hacer, yychar, yyline, yytext());}
 "when"     {return new Symbol(sym.donde, yychar, yyline, yytext());}
@@ -199,26 +194,22 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "siga"    {return new Symbol(sym.continuar, yychar, yyline, yytext());}
 "repeat"    {return new Symbol(sym.hacer, yychar, yyline, yytext());}
 "default"    {return new Symbol(sym.defecto, yychar, yyline, yytext());}
-"_write"    {return new Symbol(sym.escritura, yychar, yyline, yytext());}
-"_wf"    {return new Symbol(sym.escribir, yychar, yyline, yytext());}
-"_close"    {return new Symbol(sym.cerrar, yychar, yyline, yytext());}
+"Rstring"    {return new Symbol(sym.tstring, yychar, yyline, yytext());}
 {si} {return new Symbol(sym.si, yychar, yyline, yytext());}
 {sino} {return new Symbol(sym.sino, yychar, yyline, yytext());}
-
 "++"   {return new Symbol(sym.aumento, yychar, yyline, yytext());}
 "--"   {return new Symbol(sym.decremento, yychar, yyline, yytext());}
-
-/*Palabras reservadas*/
 ";"   {return new Symbol(sym.puntocoma, yychar, yyline, yytext());}
 ":"   {return new Symbol(sym.dospuntos, yychar, yyline, yytext());}
 ","   {return new Symbol(sym.coma, yychar, yyline, yytext());}
 "."   {return new Symbol(sym.punto, yychar, yyline, yytext());}
-"=="  {return new Symbol(sym.igualigual, yychar, yyline, yytext());}
-"<>"  {return new Symbol(sym.desigual, yychar, yyline, yytext());}
-"<="  {return new Symbol(sym.menorigual, yychar, yyline, yytext());}
-">="  {return new Symbol(sym.mayorigual, yychar, yyline, yytext());}
 "<"   {return new Symbol(sym.menor, yychar, yyline, yytext());}
 ">"   {return new Symbol(sym.mayor, yychar, yyline, yytext());}
+"="   {return new Symbol(sym.igual, yychar, yyline, yytext());}
+"=="  {return new Symbol(sym.igualigual, yychar, yyline, yytext());}
+"<="  {return new Symbol(sym.menorigual, yychar, yyline, yytext());}
+">="  {return new Symbol(sym.mayorigual, yychar, yyline, yytext());}
+"<>"  {return new Symbol(sym.desigual, yychar, yyline, yytext());}
 "*"   {return new Symbol(sym.multi, yychar, yyline, yytext());}
 "/"   {return new Symbol(sym.div, yychar, yyline, yytext());}
 "^"   {return new Symbol(sym.potencia, yychar, yyline, yytext());}
@@ -231,7 +222,6 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "}"   {return new Symbol(sym.llaved, yychar, yyline, yytext());}
 "["   {return new Symbol(sym.corchetei, yychar, yyline, yytext());}
 "]"   {return new Symbol(sym.corcheted, yychar, yyline, yytext());}
-"="   {return new Symbol(sym.igual, yychar, yyline, yytext());}
 "!"   {return new Symbol(sym.not, yychar, yyline, yytext());}
 {comilla}  
         {  

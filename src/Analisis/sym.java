@@ -8,89 +8,92 @@ package Analisis;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int twrite = 57;
-  public static final int tatexto = 51;
-  public static final int menos = 91;
-  public static final int tconcatenar = 50;
+  public static final int twrite = 61;
+  public static final int tatexto = 55;
+  public static final int menos = 94;
+  public static final int tconcatenar = 54;
   public static final int menor = 22;
-  public static final int punto = 80;
+  public static final int punto = 83;
   public static final int nulo = 27;
-  public static final int booleano = 101;
-  public static final int decremento = 79;
-  public static final int leerarchivo = 61;
+  public static final int booleano = 104;
+  public static final int decremento = 82;
+  public static final int leerarchivo = 65;
   public static final int print = 16;
   public static final int tchar = 4;
-  public static final int suma = 90;
-  public static final int importar = 40;
-  public static final int tochar = 66;
+  public static final int suma = 93;
+  public static final int importar = 43;
+  public static final int tochar = 70;
   public static final int println = 17;
   public static final int tvoid = 26;
-  public static final int twriteend = 58;
-  public static final int aumento = 78;
-  public static final int div = 93;
-  public static final int romper = 74;
-  public static final int cadena = 97;
-  public static final int dospuntos = 77;
-  public static final int mientras = 72;
+  public static final int twriteend = 62;
+  public static final int aumento = 81;
+  public static final int div = 96;
+  public static final int tapend = 51;
+  public static final int romper = 77;
+  public static final int cadena = 100;
+  public static final int dospuntos = 80;
+  public static final int mientras = 75;
   public static final int menorigual = 23;
   public static final int abstracto = 29;
-  public static final int tfusion = 49;
-  public static final int privado = 43;
-  public static final int sino = 86;
+  public static final int tfusion = 53;
+  public static final int privado = 46;
+  public static final int sino = 89;
   public static final int tint = 2;
-  public static final int toint = 68;
-  public static final int decimal = 100;
+  public static final int toint = 72;
+  public static final int decimal = 103;
   public static final int caso = 30;
-  public static final int try_ = 70;
-  public static final int sinosi = 85;
+  public static final int try_ = 74;
+  public static final int sinosi = 88;
   public static final int msn = 38;
-  public static final int treservar = 55;
-  public static final int str_ = 69;
+  public static final int treservar = 59;
+  public static final int str_ = 73;
   public static final int llavei = 8;
-  public static final int or = 83;
+  public static final int or = 86;
   public static final int tcomodin = 28;
-  public static final int caracter = 98;
+  public static final int caracter = 101;
   public static final int llaved = 9;
   public static final int extiende = 35;
   public static final int mayorigual = 24;
-  public static final int nuevo = 42;
-  public static final int tolower = 88;
+  public static final int nuevo = 45;
+  public static final int tolower = 91;
   public static final int id = 12;
-  public static final int retorno = 46;
-  public static final int estatico = 62;
+  public static final int retorno = 49;
+  public static final int cerrar = 42;
+  public static final int estatico = 66;
   public static final int desigual = 20;
-  public static final int tcopi = 47;
-  public static final int tdefinir = 48;
+  public static final int tcopi = 50;
+  public static final int tdefinir = 52;
   public static final int cat = 31;
-  public static final int protegido = 44;
+  public static final int protegido = 47;
   public static final int puntocoma = 7;
-  public static final int and = 82;
+  public static final int and = 85;
   public static final int mayor = 21;
-  public static final int tclose = 59;
-  public static final int printable = 95;
-  public static final int xor = 94;
+  public static final int tclose = 63;
+  public static final int printable = 98;
+  public static final int xor = 97;
   public static final int tbool = 5;
   public static final int EOF = 0;
-  public static final int escribir = 71;
-  public static final int taentero = 52;
-  public static final int tpeso = 54;
-  public static final int super_ = 63;
+  public static final int taentero = 56;
+  public static final int tpeso = 58;
+  public static final int escribir = 40;
+  public static final int super_ = 67;
   public static final int tstring = 6;
-  public static final int repetir = 60;
-  public static final int este = 65;
-  public static final int tostring = 87;
-  public static final int publico = 45;
+  public static final int repetir = 64;
+  public static final int este = 69;
+  public static final int tostring = 90;
+  public static final int publico = 48;
+  public static final int escritura = 41;
   public static final int potencia = 25;
   public static final int corchetei = 13;
-  public static final int touper = 89;
-  public static final int multi = 92;
-  public static final int interrogante = 76;
+  public static final int touper = 92;
+  public static final int multi = 95;
+  public static final int interrogante = 79;
   public static final int error = 1;
-  public static final int switch_ = 64;
+  public static final int switch_ = 68;
   public static final int corcheted = 14;
-  public static final int continuar = 75;
-  public static final int si = 84;
-  public static final int entero = 99;
+  public static final int continuar = 78;
+  public static final int si = 87;
+  public static final int entero = 102;
   public static final int graph = 37;
   public static final int pari = 10;
   public static final int hacer = 34;
@@ -98,18 +101,18 @@ public class sym {
   public static final int igualigual = 19;
   public static final int donde = 39;
   public static final int pard = 11;
-  public static final int para = 73;
+  public static final int para = 76;
   public static final int tdouble = 3;
   public static final int coma = 18;
-  public static final int instanceof_ = 41;
-  public static final int modulo = 96;
-  public static final int not = 81;
+  public static final int instanceof_ = 44;
+  public static final int modulo = 99;
+  public static final int not = 84;
   public static final int final_ = 36;
   public static final int igual = 15;
-  public static final int todouble = 67;
+  public static final int todouble = 71;
   public static final int clase = 32;
-  public static final int tadecimal = 53;
-  public static final int teql = 56;
+  public static final int tadecimal = 57;
+  public static final int teql = 60;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -151,6 +154,9 @@ public class sym {
   "graph",
   "msn",
   "donde",
+  "escribir",
+  "escritura",
+  "cerrar",
   "importar",
   "instanceof_",
   "nuevo",
@@ -159,6 +165,7 @@ public class sym {
   "publico",
   "retorno",
   "tcopi",
+  "tapend",
   "tdefinir",
   "tfusion",
   "tconcatenar",
@@ -182,7 +189,6 @@ public class sym {
   "toint",
   "str_",
   "try_",
-  "escribir",
   "mientras",
   "para",
   "romper",

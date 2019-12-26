@@ -7,9 +7,24 @@ package Utilidades;
 
 import AST.Instruccion.Instruccion;
 import Analisis.olc.Proyecto;
+import java.awt.HeadlessException;
+import static java.awt.image.ImageObserver.WIDTH;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import org.fife.ui.rtextarea.GutterIconInfo;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 /**
  *
@@ -33,22 +48,116 @@ public class Singlenton
     public static boolean primeraPasadaFlag = true;
     public static int contadorMain = 0;
     public static String pathMainSeleccionado = "";
+    public static File archivoDeEscritura;
+    public static boolean modoImpresion = false;
     
     public static String pathWrite ="";
     
+  
     
-    public static void setPathWrite(String s)
+    public static void setPathAppend(String s, int linea, int col)
     {
-        pathWrite = s;        
-    }
-    public static void cerrarWrite()
-    {
-        pathWrite = "";
-    }
-    
-    public static void writeLinea(String s)
-    {
+        String path = pathWrite = s;   
+        modoImpresion= false;
+        String data = null;
+        if(path==null){return ;}
+        path = path.replace("\\\\","\\");
+        try 
+        {
+            archivoDeEscritura= new File(path); 
+            if(!archivoDeEscritura.exists())
+            {
+                try {
+                    archivoDeEscritura.createNewFile();
+                } catch (IOException ex) {
+                    Logger.getLogger(Singlenton.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                Utilidades.Singlenton.registrarErrorSemantico("Warning :v", path +"El archivo no ha sido encontrado", linea, col);
+                archivoDeEscritura = null;
+            }
         
+        } 
+        catch (HeadlessException e) 
+        {
+            Utilidades.Singlenton.registrarErrorSemantico(path, "El archivo no ha sido encontrado", linea, col);   
+            archivoDeEscritura = null;
+        }                        
+    }    
+    
+    
+    public static void setPathWrite(String s, int linea, int col)
+    {
+        String path = pathWrite = s;   
+        modoImpresion= false;
+        String data = null;
+        if(path==null){return ;}
+        path = path.replace("\\\\","\\");
+        try 
+        {
+            archivoDeEscritura= new File(path); 
+            if(!archivoDeEscritura.exists())
+            {
+                try {
+                    archivoDeEscritura.createNewFile();
+                } catch (IOException ex) {
+                    Logger.getLogger(Singlenton.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                Utilidades.Singlenton.registrarErrorSemantico("Warning :v", path +"El archivo no ha sido encontrado", linea, col);
+                archivoDeEscritura = null;
+            }
+        
+        } 
+        catch (HeadlessException e) 
+        {
+            Utilidades.Singlenton.registrarErrorSemantico(path, "El archivo no ha sido encontrado", linea, col);   
+            archivoDeEscritura = null;
+        }                        
+    }
+    public static void cerrarWrite(int linea, int columna)
+    {
+        if(pathWrite.equals(""))
+        {
+            Utilidades.Singlenton.registrarErrorSemantico("Close()", "No se ha abierto ningún archivo para su escritura.", linea, columna);
+            archivoDeEscritura = null;            
+        }
+        pathWrite = "";        
+        archivoDeEscritura= null;
+    }
+    
+    public static void writeLinea(String data, int linea, int col)
+    {
+       if(archivoDeEscritura!=null)
+       {
+            BufferedWriter bw = null;
+            FileWriter fw = null;
+            try {                
+                File file = new File(archivoDeEscritura.getAbsolutePath());
+                // Si el archivo no existe, se crea!
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                // flag true, indica adjuntar información al archivo.
+                fw = new FileWriter(file.getAbsoluteFile(), modoImpresion);
+                modoImpresion = true;
+                bw = new BufferedWriter(fw);
+                bw.write(data);
+                //System.out.println("información agregada!");
+            } catch (IOException e) 
+            {
+            } finally 
+            {
+                try {
+                                //Cierra instancias de FileWriter y BufferedWriter
+                    if (bw != null)
+                        bw.close();
+                    if (fw != null)
+                        fw.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }          
+       }
+       Utilidades.Singlenton.registrarErrorSemantico(pathMainSeleccionado, "El archivo no ha sido encontrado", linea, col);         
     }
     
     

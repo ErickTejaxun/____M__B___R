@@ -6,6 +6,7 @@ import java.util.List;
 import AST.*;
 import Utilidades.ErrorC;
 import AST.Instruccion.*;
+import AST.Instruccion.InputOutput.*;
 import AST.Instruccion.Ciclos.*;
 import AST.Expresion.*;
 import AST.Entorno.*;
@@ -126,13 +127,13 @@ parser code
 terminal String tint, tdouble, tchar, tbool, tstring, puntocoma, llavei, llaved, pari, pard, id, corchetei, corcheted, igual, print, println, coma;
 terminal String igualigual, desigual, mayor, menor, menorigual, mayorigual, potencia , tvoid, nulo, tcomodin;
 terminal String abstracto, caso, cat, clase, defecto, hacer, extiende, final_, graph,msn, donde, escribir, escritura, cerrar;
-terminal String importar, instanceof_, nuevo, privado, protegido, publico, retorno, tcopi;
+terminal String importar, instanceof_, nuevo, privado, protegido, publico, retorno, tcopi, tapend;
 
 /*Palabras reservadas :v*/
 terminal String tdefinir, tfusion, tconcatenar, tatexto, taentero, tadecimal, tpeso, treservar, teql, twrite, twriteend, tclose;
 terminal String repetir;
 /*Casteos*/
-terminal String leerarchivo,estatico, super_, switch_, este, tochar, todouble, toint, str_, try_, escribir;
+terminal String leerarchivo,estatico, super_, switch_, este, tochar, todouble, toint, str_, try_;
 terminal String mientras, para, romper, continuar ,interrogante, dospuntos, aumento, decremento, punto;
 terminal String not, and, or, si, sinosi, sino, tostring, tolower, touper;
 terminal String suma, menos, multi, div, xor, printable, modulo;
@@ -204,7 +205,11 @@ non terminal Expresion ACCESO, ORIGEN;
 non terminal Expresion INSTANCIA;
 non terminal Expresion VALORASIGNACION;
 non terminal Importar IMPORTAR;
-non terminal Escribir 
+non terminal SetEscribir SETESCRIBIR;
+non terminal Escribir ESCRIBIR;
+non terminal CerrarArchivo CLOSEARCHIVO;
+non terminal SetApend SETAPPEND;
+non terminal Read READ;
 
 
 /*precedence left interrogante, punto;*/
@@ -270,8 +275,43 @@ INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |AUMENTO:inst puntocoma{:RESULT =inst;:}
        |DECREMENTO:inst puntocoma{:RESULT =inst;:}
        |CONCATENAR:inst puntocoma{:RESULT =inst;:}
+       |SETESCRIBIR:inst puntocoma{:RESULT =inst;:}
+       |SETAPPEND:inst puntocoma{:RESULT =inst;:}
+       |CLOSEARCHIVO:inst puntocoma{:RESULT =inst;:}
+       |ESCRIBIR:inst puntocoma{:RESULT =inst;:}
+       |READ:inst puntocoma{:RESULT =inst;:}
        |error
 ;
+
+READ::= tread pari EXP:e1 coma EXP:e2 pard {:RESULT = new Read(e1,e2,trigh,tleft);:}
+
+CLOSEARCHIVO ::= tclose:t pari pard {:RESULT = new  CerrarArchivo(tright, tleft);:}
+;
+
+SETESCRIBIR::= escritura:t pari EXP:e pard {:RESULT =new SetEscribir(e, tright, tleft);:}
+;
+
+SETAPPEND::= tapend:t pari EXP:e pard {:RESULT =new SetApend(e, tright, tleft);:}
+;
+
+ESCRIBIR::=
+        escribir:p pari cadena:v pard  
+        {: 
+            RESULT = new Escribir(
+                    new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft), 
+                    pright,
+                    pleft);  
+        :}
+        |escribir:p pari cadena:v coma LVALORES:l pard  
+        {: 
+            RESULT = new Escribir(
+                    new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft), 
+                    pright,
+                    pleft,
+                    l);  
+        :}        
+;
+
 
 COPI::= tcopi:t pari EXP:origen coma EXP:destino pard 
         {:

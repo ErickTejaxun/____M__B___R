@@ -15,12 +15,12 @@ import AST.Instruccion.Instruccion;
  *
  * @author erick
  */
-public class SetEscribir implements Instruccion
+public class SetApend implements Instruccion
 {
     public int linea, columna;
     public Expresion e;
     
-    public SetEscribir(Expresion ex, int l, int c)
+    public SetApend(Expresion ex, int l, int c)
     {
         this.e = ex;
         this.linea = l;
@@ -37,7 +37,7 @@ public class SetEscribir implements Instruccion
         if(tipo.isString())
         {
            path = valor.toString();
-           Utilidades.Singlenton.setPathWrite(path, linea, columna);
+           Utilidades.Singlenton.setPathAppend(path, linea, columna);
            return null;
         }
         if(tipo.isChar())
@@ -49,7 +49,7 @@ public class SetEscribir implements Instruccion
             }
             Arreglo arreglo= (Arreglo)valor;
             path = arreglo.raiz.getCadena();
-            Utilidades.Singlenton.setPathWrite(path, linea, columna);
+            Utilidades.Singlenton.setPathAppend(path, linea, columna);
             return null;
         }
         Utilidades.Singlenton.registrarErrorSemantico("Write", "Se requiere un valor de tipo CHAR array", linea, columna);
