@@ -128,7 +128,8 @@ terminal String tint, tdouble, tchar, tbool, tstring, puntocoma, llavei, llaved,
 terminal String igualigual, desigual, mayor, menor, menorigual, mayorigual, potencia , tvoid, nulo, tcomodin, tread;
 terminal String abstracto, caso, cat, clase, defecto, hacer, extiende, final_, graph,msn, donde, escribir, escritura, cerrar;
 terminal String importar, instanceof_, nuevo, privado, protegido, publico, retorno, tcopi, tapend;
-
+terminal String tetiqueta, ttexto, ttextoArea, ttextoPass, ttextoNum, tboton, tmensaje, tiniciarventana, tclick;
+terminal String tnuevogui, tanchoalto;
 /*Palabras reservadas :v*/
 terminal String tdefinir, tfusion, tconcatenar, tatexto, taentero, tadecimal, tpeso, treservar, teql, twrite, twriteend, tclose;
 terminal String repetir;
@@ -292,7 +293,7 @@ INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |error
 ;
 
-READ::= tread:t pari EXP:e1 coma cadena:e2 pard {:RESULT = new Read(e1,e2,tright,tleft);:}
+READ::= tread:t pari EXP:e1 coma id:e2 pard {:RESULT = new Read(e1,e2,tright,tleft);:}
 ;
 
 CLOSEARCHIVO ::= tclose:t pari pard {:RESULT = new  CerrarArchivo(tright, tleft);:}

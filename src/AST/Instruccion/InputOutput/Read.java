@@ -37,7 +37,7 @@ public class Read implements Instruccion
     @Override
     public Object ejectuar(Entorno entorno) 
     {
-        String path = e1.getTipo().toString();
+        String path = e1.getValor(entorno).toString();
         String dataARchivo = obtenerDataArchivo(path);
         Simbolo s = entorno.obtener(id);
         if(s== null)

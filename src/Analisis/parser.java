@@ -945,7 +945,7 @@ public class parser extends java_cup.runtime.lr_parser {
     "\150\125\151\137\152\115\153\121\001\002\000\044\024" +
     "\337\025\156\026\147\027\165\030\155\031\164\032\151" +
     "\033\145\057\161\130\153\131\152\140\150\141\154\142" +
-    "\160\143\146\144\157\146\162\001\002\000\004\147\340" +
+    "\160\143\146\144\157\146\162\001\002\000\004\016\340" +
     "\001\002\000\004\015\341\001\002\000\004\011\uffe2\001" +
     "\002\000\056\004\021\005\076\006\103\007\017\010\044" +
     "\014\142\016\134\035\133\071\043\072\130\073\132\074" +
@@ -2098,7 +2098,7 @@ class CUP$parser$actions {
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 31: // READ ::= tread pari EXP coma cadena pard 
+          case 31: // READ ::= tread pari EXP coma id pard 
             {
               Read RESULT =null;
 		int tleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)).left;
