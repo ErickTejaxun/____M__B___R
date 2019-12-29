@@ -197,7 +197,7 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "default"    {return new Symbol(sym.defecto, yychar, yyline, yytext());}
 "Rstring"    {return new Symbol(sym.tstring, yychar, yyline, yytext());}
 "Rlbl"    {return new Symbol(sym.tetiqueta, yychar, yyline, yytext());}
-"Rmensage"    {return new Symbol(sym.tmensaje, yychar, yyline, yytext());}
+"Rmensaje"    {return new Symbol(sym.tmensaje, yychar, yyline, yytext());}
 "Iniciar_ventana" {return new Symbol(sym.tiniciarventana, yychar, yyline, yytext());}
 "Al_dar_click" {return new Symbol(sym.tclick, yychar, yyline, yytext());}
 "_Nuevo_GUI"  {return new Symbol(sym.tnuevogui,yychar,yyline,yytext());}

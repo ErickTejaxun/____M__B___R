@@ -58,7 +58,7 @@ public class Multiplicacion implements Expresion
                     else 
                     if(tipoi.isInt())
                     {
-                       valor = (int)valori + (double)valord;
+                       valor = (int)valori * (double)valord;
                     }
                     else 
                     if(tipod.isInt())

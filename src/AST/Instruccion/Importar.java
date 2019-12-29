@@ -33,6 +33,7 @@ public class Importar implements Instruccion
     public Object ejectuar(Entorno entorno) 
     {
         String pathCarpeta = Utilidades.Singlenton.getArchivoActual();
+        
         StringTokenizer tokenPartesPath = new StringTokenizer(pathCarpeta,"\\");
         String[] partesPathActual = new String[tokenPartesPath.countTokens()];  
         int i= 0;
@@ -54,8 +55,9 @@ public class Importar implements Instruccion
                 pathParcial +="\\" +partesPathActual[i];
             }
         }
-        ruta = pathParcial +"\\"+ ruta;        
+        //ruta = pathParcial +"\\"+ ruta;
         
+        ruta = calcularPath(pathParcial, ruta);
         
         scanner lexico = null;
         parser sintactico = null;
@@ -107,6 +109,69 @@ public class Importar implements Instruccion
     @Override
     public int columna() {
         return columna;
+    }
+    
+    
+    public String calcularPath(String pathRaiz, String path)
+    {
+        path = path.replace("/", "\\");
+        String pathReal = pathRaiz+"\\"+path.replace("/", "\\");
+        StringTokenizer tokenPartesPath = new StringTokenizer(pathRaiz,"\\");
+        StringTokenizer tokenPartesArchivo = new StringTokenizer(path,"\\");
+        
+        
+        String[] partesPathActual = new String[tokenPartesPath.countTokens()];
+        String[] partesPathArchivo = new String[tokenPartesArchivo.countTokens()];
+        
+        int i=0;
+        while(tokenPartesPath.hasMoreTokens()){
+            String str=tokenPartesPath.nextToken();
+            partesPathActual[i]=str;            
+            i++;
+        } 
+        i=0;
+        while(tokenPartesArchivo.hasMoreTokens()){
+            String str=tokenPartesArchivo.nextToken();
+            partesPathArchivo[i]=str;            
+            i++;
+        }         
+        
+        
+        int retroceso = 0;
+        for(String parte : partesPathArchivo)
+        {
+            if(parte.equals(".."))
+            {
+                retroceso++;
+            }
+        }
+        String pathFinal100RealNofake ="";
+        for(int c = 0; c < partesPathActual.length - retroceso; c++)
+        {
+            if(c == 0)
+            {
+                pathFinal100RealNofake = partesPathActual[c];
+            }
+            else
+            {
+                pathFinal100RealNofake += "\\"+partesPathActual[c];
+            }
+        }
+        if(partesPathArchivo[0].equals("."))
+        {
+            for(int c = 1+retroceso; c < partesPathArchivo.length; c++)
+            {
+                pathFinal100RealNofake += "\\" + partesPathArchivo[c];
+            }
+        }
+        else
+        {
+            for(int c = 0+retroceso; c < partesPathArchivo.length; c++)
+            {
+                pathFinal100RealNofake += "\\" + partesPathArchivo[c];
+            }            
+        }
+        return pathFinal100RealNofake;
     }
     
     

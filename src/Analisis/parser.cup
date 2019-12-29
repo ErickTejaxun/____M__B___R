@@ -18,6 +18,7 @@ import AST.Expresion.Casteo.*;
 import AST.Expresion.Casteo.Explicito.*;
 import AST.Expresion.Funcion.*;
 import AST.Clase.*;
+import AST.Instruccion.GUI.*;
 
 
 parser code
@@ -144,11 +145,11 @@ terminal int entero;
 terminal double decimal;
 terminal boolean booleano;
 
-non terminal Bloque BLOQUE;
+non terminal Bloque BLOQUE, BLOQUEVENTANA;
 non terminal ArrayList<Nodo> LINST, CONSTANTES;
 non terminal Nodo INST;
 non terminal Declaracion DECLARACION;
-non terminal Expresion EXP, AUMENTO, DECREMENTO, EXPLICITCAST;
+non terminal Expresion EXP, AUMENTO, DECREMENTO;
 non terminal INICIO;
 non terminal Tipo PRIMITIVO;
 non terminal Imprimir PRINT;
@@ -160,7 +161,6 @@ non terminal DoWhile DOWHILE;
 non terminal Break BREAK;
 non terminal Continuar CONTINUE;
 non terminal If IF, ELSE;
-non terminal Ternario TER;
 non terminal For FOR;
 non terminal Expresion /*ACTUALIZACION,*/ EXPRETORNO;
 non terminal Nodo ACTUALIZACION;
@@ -173,22 +173,17 @@ non terminal NodoNario ITEM,LITEM,ARR;
 non terminal Tipo TIPO;
 non terminal ArrayList<Dec> LDEC;
 non terminal Dec DEC, DECCONSTANTE;
-non terminal ForEach FOREACH;
 non terminal Caso CASO, DEFECTO;
 non terminal ArrayList<Caso> LCASO;
 non terminal Switch SWITCH;
-non terminal ArrayList<String> LMODFICADOR;
-non terminal String MODFUNCION, MODCONST;
-non terminal Tipo RESULTADO;
 non terminal ParametroFormal PARFORMAL;
 non terminal ArrayList<ParametroFormal> LPARFORMAL;
 /*non terminal Constructor CONSTRUCTOR;*/
-non terminal Funcion FUNCION, CABECERAMET;
+non terminal Funcion FUNCION, CABECERAMET, ALINICIAR, ALCLICK;
 non terminal DeclaracionConstante DECLARACIONCONSTANTE;
 /*non terminal ArrayList<Nodo> LFUNCION;*/
 non terminal Retorno RETORNO;
 non terminal Llamada LLAMADA;
-non terminal String MODATRIB;
 non terminal ArrayList<Expresion> PARACTUALES,ACTUALES;
 non terminal Concatenar CONCATENAR;
 
@@ -197,7 +192,7 @@ non terminal Concatenar CONCATENAR;
 /*non terminal ArrayList<Nodo> LDECATRIB;*/
 non terminal DeclaracionAtributo DECATRIB;
 
-non terminal Fusion FUSION, CUERPOFUSION, CUERPO ;
+non terminal Fusion FUSION, CUERPO ;
 
 /*Arreglos*/
 non terminal Expresion VALORARREGLO ;
@@ -211,6 +206,20 @@ non terminal Escribir ESCRIBIR;
 non terminal CerrarArchivo CLOSEARCHIVO;
 non terminal SetApend SETAPPEND;
 non terminal Read READ;
+
+/*Gui componentes*/
+non terminal DeclaracionComponente TEXTO;
+non terminal DeclaracionComponente TEXTOAREA;
+non terminal DeclaracionComponente TEXTOPASS;
+non terminal DeclaracionComponente TEXTONUM;
+non terminal DeclaracionComponente BOTON;
+non terminal DeclaracionComponente MENSAJE;
+non terminal DeclaracionComponente ETIQUETA;
+
+non terminal Instruccion GUICOMPONENTE;
+non terminal SetAltoAncho SETALTOANCHO;
+non terminal RMensaje RMENSAJE;
+non terminal InstanciarGui INSTANCIARGUI;
 
 
 /*precedence left interrogante, punto;*/
@@ -256,13 +265,42 @@ INICIO ::=
                 }  
                 raiz = new AST(constantes);
             :}
-        |   LINST:lista {: Imprimir("Correcto"); raiz = new AST(lista);; :}
+        | LINST:lista {: Imprimir("Correcto"); raiz = new AST(lista);; :}
 ;
-       
+
+
+
+
+GUICOMPONENTE::= 
+              ETIQUETA:comp puntocoma{: RESULT = comp;:}
+            | TEXTO:comp puntocoma{: RESULT = comp;:} 
+            | TEXTOAREA:comp puntocoma{: RESULT = comp;:}
+            | TEXTOPASS:comp puntocoma{: RESULT = comp;:} 
+            | TEXTONUM:comp puntocoma{: RESULT = comp;:} 
+            | BOTON:comp puntocoma{: RESULT = comp;:} 
+            | MENSAJE:comp puntocoma{: RESULT = comp;:}
+;
+
+ALINICIAR::= tvoid:pos id dospuntos tiniciarventana pari pard BLOQUEVENTANA
+;
+
+ALCLICK ::= tvoid:pos id:nombre dospuntos tclick pari pard BLOQUEVENTANA
+;
+
+//{TEXT,TEXTAREA,TEXTPASS, TEXTNUM, ETIQUETA, BOTON};
+ETIQUETA ::= tetiqueta:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft,Componente.tipoComponente.ETIQUETA );:};
+TEXTO ::= ttexto:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft,Componente.tipoComponente.TEXT);:};
+TEXTOAREA ::= ttextoArea:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft, Componente.tipoComponente.TEXTAREA);:};
+TEXTOPASS ::= ttextoPass:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft, Componente.tipoComponente.TEXTPASS);:};
+TEXTONUM ::= ttextoNum:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft, Componente.tipoComponente.TEXTNUM);:};
+BOTON ::= tboton:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft,Componente.tipoComponente.BOTON);:};
+MENSAJE ::= tmensaje:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft,Componente.tipoComponente.MENSAJE);:};
+
+INSTANCIARGUI ::= tnuevogui:pos  pari id:nombre pard {: RESULT = new InstanciarGui(nombre, posright,posleft);:};
+
 LINST::= LINST:lista INST:inst {: lista.add(inst); RESULT = lista;:}
 	    |INST:inst {: ArrayList<Nodo> l = new ArrayList<Nodo>(); l.add(inst); RESULT = l;:}         
 ;
-
 
 INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |MSN:inst puntocoma {: RESULT = inst;:}
@@ -289,7 +327,12 @@ INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |SETAPPEND:inst puntocoma{:RESULT =inst;:}
        |CLOSEARCHIVO:inst puntocoma{:RESULT =inst;:}
        |ESCRIBIR:inst puntocoma{:RESULT =inst;:}
-       |READ:inst puntocoma {:RESULT =inst;:}
+       |READ:inst puntocoma {:RESULT =inst;:}   
+       |SETALTOANCHO:inst puntocoma {:RESULT =inst;:}   
+       |RMENSAJE:inst puntocoma {:RESULT =inst;:}
+       |ALCLICK:inst puntocoma {:RESULT =inst;:}
+       |ALINICIAR:inst puntocoma {:RESULT =inst;:}
+       |INSTANCIARGUI:inst puntocoma {:RESULT =inst;:}
        |error
 ;
 
@@ -333,6 +376,7 @@ COPI::= tcopi:t pari EXP:origen coma EXP:destino pard
 CONSTANTES::= CONSTANTES:l DECLARACIONCONSTANTE:inst {: RESULT = l ; RESULT.add(inst);:}
              |DECLARACIONCONSTANTE:inst {: RESULT  = new ArrayList<Nodo>(); RESULT.add(inst);:}
              |IMPORTAR:inst {: RESULT  = new ArrayList<Nodo>(); RESULT.add(inst);:}
+             |GUICOMPONENTE:inst {: RESULT  = new ArrayList<Nodo>(); RESULT.add(inst);:}
 ;
 
                 /*#definir id 10 */
