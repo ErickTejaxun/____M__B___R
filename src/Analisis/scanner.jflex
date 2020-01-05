@@ -198,9 +198,10 @@ sinosi={sino}({comentario}|{espacio})*(si)
 "Rstring"    {return new Symbol(sym.tstring, yychar, yyline, yytext());}
 "Rlbl"    {return new Symbol(sym.tetiqueta, yychar, yyline, yytext());}
 "Rmensaje"    {return new Symbol(sym.tmensaje, yychar, yyline, yytext());}
-"Iniciar_ventana" {return new Symbol(sym.tiniciarventana, yychar, yyline, yytext());}
-"Al_dar_click" {return new Symbol(sym.tclick, yychar, yyline, yytext());}
+"iniciar_ventana" {return new Symbol(sym.tiniciarventana, yychar, yyline, yytext());}
+"al_dar_click" {return new Symbol(sym.tclick, yychar, yyline, yytext());}
 "_Nuevo_GUI"  {return new Symbol(sym.tnuevogui,yychar,yyline,yytext());}
+"_abrir_ventana"  {return new Symbol(sym.tabrirventana,yychar,yyline,yytext());}
 "_alto_y_ancho" {return new Symbol(sym.tanchoalto,yychar,yyline,yytext());}
 "Rboton"    {return new Symbol(sym.tboton, yychar, yyline, yytext());}
 "RtxtN"    {return new Symbol(sym.ttextoNum, yychar, yyline, yytext());}

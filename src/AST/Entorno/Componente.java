@@ -6,6 +6,7 @@
 package AST.Entorno;
 
 import AST.Expresion.Expresion;
+import AST.Instruccion.Instruccion;
 import java.util.ArrayList;
 
 /**
@@ -19,6 +20,7 @@ public class Componente extends Simbolo
     public int ancho = 0, alto =0;
     public String texto = "";
     public int posX = 0, posY;
+    public Instruccion evento;
 
     public Componente() 
     {

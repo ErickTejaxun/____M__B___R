@@ -70,7 +70,7 @@ public class Decremento implements Expresion
                 }
                 tipo = exp.getTipo();                
                 entorno.actualizar(simbolo);
-                return tmp;
+                return simbolo.valor;
             }
             else
             {

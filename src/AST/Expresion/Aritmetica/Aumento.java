@@ -73,7 +73,7 @@ public class Aumento implements Expresion
                         simbolo.valor = (char)tmp + 1;                        
                 }
                 //simbolo.valor = tmp;
-                return tmp;
+                return simbolo.valor;
             }
             else
             {

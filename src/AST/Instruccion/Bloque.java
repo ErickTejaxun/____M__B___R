@@ -26,7 +26,7 @@ public class Bloque implements Instruccion, Runnable
     public int linea, columna;
     boolean seguirHilo=false;
     boolean hiloIniciado=false;
-    Thread hilo;
+    public Thread hilo;
     int cont=0;    
     
     public Bloque(ArrayList<Nodo> list, int l, int c)
@@ -34,7 +34,13 @@ public class Bloque implements Instruccion, Runnable
         this.instrucciones = list;
         this.linea = l;
         this.columna = c;        
-    }        
+    }      
+    
+    public void crearHilo()
+    {
+        this.hilo = new Thread();
+        this.hilo.start();
+    }
     
     @Override    
     public Object ejectuar(Entorno entorno) 
@@ -48,7 +54,10 @@ public class Bloque implements Instruccion, Runnable
                 {
                     pararHIlo(!entorno.ventana.resaltarLinea(nodo.linea()));
                 }
-                Thread.sleep(entorno.ventana.getVelocidad());                
+                if(entorno.ventana!=null)
+                {
+                    Thread.sleep(entorno.ventana.getVelocidad()); 
+                }                                
                 if(nodo instanceof Instruccion)
                 {
                     Entorno local = global;

@@ -9,6 +9,7 @@ import AST.Clase.Objeto;
 import AST.Entorno.Entorno;
 import AST.Entorno.Simbolo;
 import AST.Entorno.Tipo;
+import static AST.Entorno.Tipo.TypePrimitive.NULO;
 import AST.Expresion.Expresion;
 import AST.Expresion.Variable;
 import Utilidades.ErrorC;
@@ -63,7 +64,7 @@ public class Llamada implements Expresion
         
         /*Si es un objeto el origen de los datos
         Obtenemos el entorno de la clase.
-        */
+        */                                
         if(origen!=null)
         {
             Object origenFuncion = null; //origen.getValor(entorno);
@@ -156,6 +157,7 @@ public class Llamada implements Expresion
                 return resultado;
             }                
         }
+        tipo = new Tipo(NULO);
             
             
 //            int combinaciones = combinaciones(parametros.size());
@@ -257,6 +259,6 @@ public class Llamada implements Expresion
 
     @Override
     public Tipo getTipo() {
-        return tipo;
+        return tipo == null ? new Tipo(NULO): tipo;
     }          
 }

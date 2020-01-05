@@ -84,6 +84,11 @@ public class Simbolo
         return rol;
     }
     
+    public boolean esVentana()
+    {
+        return rol == CONSTRUCTOR;
+    }
+    
     public String getMessage()
     {
         return  dimensiones.size()==0?    

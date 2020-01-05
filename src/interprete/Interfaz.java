@@ -266,7 +266,7 @@ public class Interfaz extends javax.swing.JFrame implements Runnable{
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelEdicionLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(botonCompilar, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                    .addComponent(botonCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, Short.MAX_VALUE)
                     .addComponent(botonCompilar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -524,6 +524,7 @@ public class Interfaz extends javax.swing.JFrame implements Runnable{
         });
         menuArchivo.add(jMenuItem2);
 
+        menuGuardar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuGuardar.setText("Guardar Archivo");
         menuGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -639,6 +640,7 @@ public class Interfaz extends javax.swing.JFrame implements Runnable{
        Utilidades.Singlenton.breakPoints.clear();
        Utilidades.Singlenton.puntos.clear();
        slideVelocidad.setValue(0);
+       Utilidades.Singlenton.ventana = this;
        if(seguirHilo)
        {
            pararHilo(false);

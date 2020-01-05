@@ -99,5 +99,11 @@ public class Tipo
     public boolean isPrimitivo()
     {
         return !typeClass.equals("");
-    }    
+    }  
+    
+    public boolean isVentana()
+    {
+        return nombreTipo().equals("erickVentana");
+    }
+    
 }

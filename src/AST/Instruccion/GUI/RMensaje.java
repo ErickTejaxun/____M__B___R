@@ -22,6 +22,23 @@ public class RMensaje implements Instruccion
     public int linea, columna;
     public Expresion valor;
     public ArrayList<Expresion> listaValores;
+    
+    public RMensaje(Expresion cad, int l , int c,ArrayList<Expresion> lista)
+    {
+        this.valor = cad;
+        this.listaValores = lista;
+        this.linea = l;
+        this.columna = c;
+    }
+    
+    public RMensaje(Expresion cad, int l , int c)
+    {
+        this.valor = cad;        
+        this.linea = l;
+        this.columna = c;
+    }    
+    
+    
 
     @Override
     public Object ejectuar(Entorno entorno) 

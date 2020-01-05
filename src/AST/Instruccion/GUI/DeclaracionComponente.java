@@ -24,7 +24,7 @@ public class DeclaracionComponente implements Instruccion
         this.id = id;
         this.tipo = t;
         this.linea = l;
-        this.columna = c;
+        this.columna = c;        
     }
 
     public DeclaracionComponente(String nombre, int pright, int pleft, Componente.tipoComponente tipoComponente) {
@@ -37,9 +37,9 @@ public class DeclaracionComponente implements Instruccion
     @Override
     public Object ejectuar(Entorno entorno) 
     {        
-        Componente comp = new Componente(linea, columna, id, tipo);
+        Componente comp = new Componente(linea, columna, id, tipo);        
         entorno.insertar(comp);
-        return null;
+        return comp;
     }
 
     @Override

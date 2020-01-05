@@ -66,7 +66,8 @@ public class Importar implements Instruccion
             Utilidades.Singlenton.pilaArchivos.add(ruta);                
             lexico=new scanner(new java.io.FileReader(ruta));                                             
             sintactico = new parser(lexico);                              
-            sintactico.parse();         
+            sintactico.parse();
+            Utilidades.Singlenton.pilaArchivos.pop();
         } 
         catch (Exception ex) 
         {

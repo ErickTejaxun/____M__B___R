@@ -7,6 +7,7 @@ package Utilidades;
 
 import AST.Instruccion.Instruccion;
 import Analisis.olc.Proyecto;
+import interprete.Interfaz;
 import java.awt.HeadlessException;
 import static java.awt.image.ImageObserver.WIDTH;
 import java.io.BufferedWriter;
@@ -50,13 +51,13 @@ public class Singlenton
     public static String pathMainSeleccionado = "";
     public static File archivoDeEscritura;
     public static boolean modoImpresion = false;
-    
+    public static Interfaz ventana = null;
     public static String pathWrite ="";
     
-  
+    
     
     public static void setPathAppend(String s, int linea, int col)
-    {
+    {        
         String path = pathWrite = s;   
         modoImpresion= false;
         String data = null;

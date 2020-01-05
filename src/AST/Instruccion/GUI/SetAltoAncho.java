@@ -19,6 +19,16 @@ public class SetAltoAncho implements Instruccion
     public int linea, columna;
     public Expresion ancho, alto;
     
+    
+    public SetAltoAncho(Expresion e1, Expresion e2, int l, int c)
+    {
+        this.alto = e1;
+        this.ancho = e2;
+        this.linea = l;
+        this.columna = c;
+    }
+    
+    
     @Override
     public Object ejectuar(Entorno entorno) 
     {

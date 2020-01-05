@@ -130,7 +130,7 @@ terminal String igualigual, desigual, mayor, menor, menorigual, mayorigual, pote
 terminal String abstracto, caso, cat, clase, defecto, hacer, extiende, final_, graph,msn, donde, escribir, escritura, cerrar;
 terminal String importar, instanceof_, nuevo, privado, protegido, publico, retorno, tcopi, tapend;
 terminal String tetiqueta, ttexto, ttextoArea, ttextoPass, ttextoNum, tboton, tmensaje, tiniciarventana, tclick;
-terminal String tnuevogui, tanchoalto;
+terminal String tnuevogui, tanchoalto, tabrirventana;
 /*Palabras reservadas :v*/
 terminal String tdefinir, tfusion, tconcatenar, tatexto, taentero, tadecimal, tpeso, treservar, teql, twrite, twriteend, tclose;
 terminal String repetir;
@@ -179,7 +179,10 @@ non terminal Switch SWITCH;
 non terminal ParametroFormal PARFORMAL;
 non terminal ArrayList<ParametroFormal> LPARFORMAL;
 /*non terminal Constructor CONSTRUCTOR;*/
-non terminal Funcion FUNCION, CABECERAMET, ALINICIAR, ALCLICK;
+non terminal Funcion FUNCION, CABECERAMET;
+non terminal Iniciar_Ventana ALINICIAR;
+non terminal AlClick ALCLICK;
+
 non terminal DeclaracionConstante DECLARACIONCONSTANTE;
 /*non terminal ArrayList<Nodo> LFUNCION;*/
 non terminal Retorno RETORNO;
@@ -220,6 +223,7 @@ non terminal Instruccion GUICOMPONENTE;
 non terminal SetAltoAncho SETALTOANCHO;
 non terminal RMensaje RMENSAJE;
 non terminal InstanciarGui INSTANCIARGUI;
+non terminal AbrirVentana ABRIRVENTANA;
 
 
 /*precedence left interrogante, punto;*/
@@ -266,6 +270,7 @@ INICIO ::=
                 raiz = new AST(constantes);
             :}
         | LINST:lista {: Imprimir("Correcto"); raiz = new AST(lista);; :}
+        | CONSTANTES:lista {: Imprimir("Correcto"); raiz = new AST(lista);; :}
 ;
 
 
@@ -278,13 +283,18 @@ GUICOMPONENTE::=
             | TEXTOPASS:comp puntocoma{: RESULT = comp;:} 
             | TEXTONUM:comp puntocoma{: RESULT = comp;:} 
             | BOTON:comp puntocoma{: RESULT = comp;:} 
-            | MENSAJE:comp puntocoma{: RESULT = comp;:}
+            
 ;
 
-ALINICIAR::= tvoid:pos id dospuntos tiniciarventana pari pard BLOQUEVENTANA
+ALINICIAR::= tvoid:res id:nombre dospuntos tiniciarventana pari pard BLOQUE:instrucciones
+         {:             
+            ArrayList<ParametroFormal> lf = new ArrayList<ParametroFormal>();
+            RESULT  = new Iniciar_Ventana( new ArrayList<String>(),new Tipo("erickVentana"),Utilidades.Singlenton.pilaArchivos.getLast(), lf, resright,resleft ); 
+            RESULT.setInstrucciones(instrucciones);
+         :}
 ;
 
-ALCLICK ::= tvoid:pos id:nombre dospuntos tclick pari pard BLOQUEVENTANA
+ALCLICK ::= tvoid:pos id:nombre dospuntos tclick pari pard BLOQUE:bloque {:RESULT = new AlClick(nombre, bloque, posright, posleft);:}
 ;
 
 //{TEXT,TEXTAREA,TEXTPASS, TEXTNUM, ETIQUETA, BOTON};
@@ -294,7 +304,27 @@ TEXTOAREA ::= ttextoArea:p id:nombre {:RESULT = new DeclaracionComponente(nombre
 TEXTOPASS ::= ttextoPass:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft, Componente.tipoComponente.TEXTPASS);:};
 TEXTONUM ::= ttextoNum:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft, Componente.tipoComponente.TEXTNUM);:};
 BOTON ::= tboton:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft,Componente.tipoComponente.BOTON);:};
-MENSAJE ::= tmensaje:p id:nombre {:RESULT = new DeclaracionComponente(nombre,pright,pleft,Componente.tipoComponente.MENSAJE);:};
+
+
+
+/*RMENSAJE ::= tmensaje:p pari EXP {:RESULT = new RMensaje(nombre,pright,pleft,Componente.tipoComponente.MENSAJE);:};*/
+
+RMENSAJE::= tmensaje:p pari cadena:v pard  
+        {: 
+            RESULT = new RMensaje(
+                    new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft), 
+                    pright,
+                    pleft);  
+        :}
+        |tmensaje:p pari cadena:v coma LVALORES:l pard  
+        {: 
+            RESULT = new RMensaje(
+                    new Literal(new Tipo(Tipo.TypePrimitive.STRING), v, vright,vleft), 
+                    pright,
+                    pleft,
+                    l);  
+        :}        
+;
 
 INSTANCIARGUI ::= tnuevogui:pos  pari id:nombre pard {: RESULT = new InstanciarGui(nombre, posright,posleft);:};
 
@@ -330,11 +360,18 @@ INST::= PRINT:inst puntocoma {: RESULT = inst;:}
        |READ:inst puntocoma {:RESULT =inst;:}   
        |SETALTOANCHO:inst puntocoma {:RESULT =inst;:}   
        |RMENSAJE:inst puntocoma {:RESULT =inst;:}
-       |ALCLICK:inst puntocoma {:RESULT =inst;:}
-       |ALINICIAR:inst puntocoma {:RESULT =inst;:}
+       |ALCLICK:inst  {:RESULT =inst;:}
+       |ALINICIAR:inst  {:RESULT =inst;:}
        |INSTANCIARGUI:inst puntocoma {:RESULT =inst;:}
+       |GUICOMPONENTE:inst {:RESULT =inst;:}
+       |ABRIRVENTANA:inst puntocoma{:RESULT =inst;:}
        |error
 ;
+
+
+ABRIRVENTANA::= tabrirventana:pos pari cadena:id pard {: RESULT = new AbrirVentana(id, posright, posleft);:};
+
+SETALTOANCHO::= tanchoalto:pos pari EXP:v1 coma EXP:v2 pard {: RESULT = new SetAltoAncho(v1, v2, posright, posleft);:};
 
 READ::= tread:t pari EXP:e1 coma id:e2 pard {:RESULT = new Read(e1,e2,tright,tleft);:}
 ;
@@ -374,9 +411,9 @@ COPI::= tcopi:t pari EXP:origen coma EXP:destino pard
 ;        
 
 CONSTANTES::= CONSTANTES:l DECLARACIONCONSTANTE:inst {: RESULT = l ; RESULT.add(inst);:}
+             |CONSTANTES:l IMPORTAR:inst {: RESULT = l ; RESULT.add(inst);:}
              |DECLARACIONCONSTANTE:inst {: RESULT  = new ArrayList<Nodo>(); RESULT.add(inst);:}
-             |IMPORTAR:inst {: RESULT  = new ArrayList<Nodo>(); RESULT.add(inst);:}
-             |GUICOMPONENTE:inst {: RESULT  = new ArrayList<Nodo>(); RESULT.add(inst);:}
+             |IMPORTAR:inst {: RESULT  = new ArrayList<Nodo>(); RESULT.add(inst);:}             
 ;
 
                 /*#definir id 10 */
@@ -766,10 +803,8 @@ LPARFORMAL::=
 ;
 
 PARFORMAL::=  
-         TIPO:tipo id:nombre{: RESULT = new ParametroFormal(tipo, nombre, true,new ArrayList<Expresion>(), tiporight, tipoleft);:}
-        | final_:f TIPO:tipo id:nombre {: RESULT = new ParametroFormal(tipo, nombre, true,new ArrayList<Expresion>(),fright, fleft);:}
-        | TIPO:tipo id:nombre NDIM:n{: RESULT = new ParametroFormal(tipo, nombre, true,n, tiporight, tipoleft);:}
-        | final_:f TIPO:tipo id:nombre NDIM:n {: RESULT = new ParametroFormal(tipo, nombre, true, n, fright, fleft);:}             
+         TIPO:tipo id:nombre{: RESULT = new ParametroFormal(tipo, nombre, true,new ArrayList<Expresion>(), tiporight, tipoleft);:}        
+        | TIPO:tipo id:nombre NDIM:n{: RESULT = new ParametroFormal(tipo, nombre, true, n, tiporight, tipoleft);:}         
 ;
         
 
