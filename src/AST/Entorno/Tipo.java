@@ -98,7 +98,7 @@ public class Tipo
     
     public boolean isPrimitivo()
     {
-        return !typeClass.equals("");
+        return typeClass.equals("");
     }  
     
     public boolean isVentana()

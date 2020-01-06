@@ -6,14 +6,18 @@
 package AST.Expresion.Funcion;
 
 import AST.Clase.Objeto;
+import AST.Entorno.Componente;
 import AST.Entorno.Entorno;
 import AST.Entorno.Simbolo;
 import AST.Entorno.Tipo;
-import static AST.Entorno.Tipo.TypePrimitive.NULO;
+import static AST.Entorno.Tipo.TypePrimitive.*;
+import static AST.Entorno.Tipo.TypePrimitive.*;
 import AST.Expresion.Expresion;
 import AST.Expresion.Variable;
 import Utilidades.ErrorC;
 import java.util.ArrayList;
+import javax.swing.JTextArea;
+import javax.swing.*;
 
 /**
  *
@@ -61,13 +65,13 @@ public class Llamada implements Expresion
         /*Hay que generar la firma para poder llamar al método*/
         Entorno local = entorno;
         Entorno entornoLLamada = new Entorno(local.getGlobalClase(),local.ventana);
-        
+        Object origenFuncion = null;
         /*Si es un objeto el origen de los datos
         Obtenemos el entorno de la clase.
         */                                
         if(origen!=null)
         {
-            Object origenFuncion = null; //origen.getValor(entorno);
+             origenFuncion= null; //origen.getValor(entorno);
             if(origen instanceof Variable)
             {
                 Variable var = (Variable)origen;
@@ -78,12 +82,79 @@ public class Llamada implements Expresion
                     origenFuncion = obj;
                     //local = obj.entornoObjeto;
                 }   
+                if(s instanceof Componente)
+                {
+                    Componente componente = (Componente)s;
+                    switch(nombreMetodo)
+                    {
+                        case "gettexto":
+                            if(componente.valor instanceof JTextField)
+                            {
+                                tipo = new Tipo(STRING);
+                                return ((JTextField)componente.valor).getText();
+                            }
+                            if(componente.valor instanceof JTextArea)
+                            {
+                                tipo = new Tipo(STRING);
+                                return ((JTextArea)componente.valor).getText();                                
+                            }
+                            if(componente.valor instanceof JPasswordField)
+                            {
+                                tipo = new Tipo(STRING);
+                                return ((JPasswordField)componente.valor).getText();                                
+                            }    
+                            if(componente.valor instanceof JSpinner)
+                            {
+                                tipo = new Tipo(STRING);
+                                return ((JSpinner)componente.valor).getValue().toString();                                
+                            }                              
+                            break;
+                        case "getancho":
+                            if(componente.valor instanceof JTextField)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JTextField)componente.valor).getWidth();
+                            }
+                            if(componente.valor instanceof JTextArea)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JTextArea)componente.valor).getText();                                
+                            }
+                            if(componente.valor instanceof JPasswordField)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JPasswordField)componente.valor).getText();                                
+                            }    
+                            if(componente.valor instanceof JSpinner)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JSpinner)componente.valor).getValue().toString();                                
+                            }                              
+                            break;                            
+                        
+                    }                     
+                }
             }
             else
             {
                 origenFuncion = origen.getValor(entorno);
             }
-            
+            /*
+            if(origenFuncion instanceof Componente)
+            {
+                Componente componente = (Componente)origenFuncion;
+                switch(firma)
+                {
+                    case "gettext":
+                        if(componente.valor instanceof JTextField)
+                        {
+                            tipo = new Tipo(STRING);
+                            return ((JTextField)componente.valor).getText();
+                        }
+                        break;
+                }                        
+            }                       
+            */
             if(origenFuncion==null)
             {
                 Utilidades.Singlenton.registrarError(Utilidades.Singlenton.nombreVariable, "No encontrada" , ErrorC.TipoError.SEMANTICO, linea, columna);
@@ -157,6 +228,7 @@ public class Llamada implements Expresion
                 return resultado;
             }                
         }
+        /*Verificamos si esas funciones son nativas y de la GUi*/        
         tipo = new Tipo(NULO);
             
             

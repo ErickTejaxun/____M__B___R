@@ -108,6 +108,7 @@ public class Bloque implements Instruccion, Runnable
                 }
             } catch (InterruptedException ex) 
             {
+                Utilidades.Singlenton.ventana.mostrarErrores();
                 Logger.getLogger(Bloque.class.getName()).log(Level.SEVERE, null, ex);
             }            
         }        

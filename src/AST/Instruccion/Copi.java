@@ -122,15 +122,42 @@ public class Copi implements Instruccion
                     case CHAR:
                         if(expresion.getTipo().isString())
                         {
-                          simbolo.valor= generarArregloAtravesDeCadena(linea, columna, valor.toString(), entorno);                                                       
+                            Arreglo arreglo = generarArregloAtravesDeCadena(linea, columna, valor.toString(), entorno);      
+                            //simbolo.valor = arreglo;                           
+                            int flagError = 0;
+                            if(simbolo.valor instanceof Arreglo)
+                            {
+                                Arreglo arregloOriginal = (Arreglo)simbolo.valor;                                
+                                for(int x = 0 ; x < arregloOriginal.raiz.hijos.size(); x++)
+                                {
+                                    if(x > arreglo.raiz.hijos.size())
+                                    {
+                                        flagError = 1;
+                                        arregloOriginal.raiz.hijos.get(x).valor  = '\0';
+                                        arregloOriginal.raiz.hijos.get(x).tipo  = new Tipo(CHAR);
+                                    }
+                                    else
+                                    if(x <= arreglo.raiz.hijos.size())
+                                    {                                        
+                                        arregloOriginal.raiz.hijos.get(x).valor  = arreglo.raiz.hijos.get(x).valor;
+                                        arregloOriginal.raiz.hijos.get(x).tipo  = new Tipo(CHAR);
+                                    }                                                                                                        
+                                }
+                            }
+                            if(flagError == 1)
+                            {
+                                Utilidades.Singlenton.registrarErrorSemantico(id, "No coinciden los tamaños de las caenas", linea, columna);
+                                return null;
+                            }
+                          return null;
                         }
                         break;
 //                         Utilidades.Singlenton.registrarError(Utilidades.Singlenton.nombreVariable, "No se le puede asignar un valor de tipo "+ expresion.getTipo().nombreTipo() +" a un tipo "+simbolo.tipo.nombreTipo(), ErrorC.TipoError.SEMANTICO,linea, columna);
 //                         return null;                      
                     
                     default:                                
-                                Utilidades.Singlenton.registrarErrorSemantico(id, "Función _copi() solo permite copiar caracteres. Tipo del valor:"+simbolo.tipo.nombreTipo(), linea, linea);
-                                return null;                                                                           
+                            Utilidades.Singlenton.registrarErrorSemantico(id, "Función _copi() solo permite copiar caracteres. Tipo del valor:"+simbolo.tipo.nombreTipo(), linea, linea);
+                            return null;                                                                           
                 }                 
             }  
         }  

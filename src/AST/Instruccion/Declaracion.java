@@ -10,6 +10,8 @@ import AST.Clase.Objeto;
 import AST.Entorno.Simbolo;
 import AST.Expresion.Expresion;
 import AST.Entorno.Entorno;
+import AST.Entorno.Simbolo.Rol;
+import static AST.Entorno.Simbolo.Rol.*;
 import AST.Entorno.Tipo;
 import static AST.Entorno.Tipo.TypePrimitive.CHAR;
 import AST.Expresion.Arreglo.Arreglo;
@@ -30,6 +32,7 @@ public class Declaracion implements Instruccion
     public int linea, columna;
     public int dimensiones;
     public ArrayList<Dec> declaraciones;
+    public Rol rol = VAR;
     
     
     public Declaracion(Tipo t, String id, int d, int l,int c)
@@ -214,6 +217,7 @@ public class Declaracion implements Instruccion
         
         if(valor instanceof Arreglo)
         {
+            rol = ARREGLO;
             Arreglo arregloTmp = (Arreglo)valor;
             System.out.println(arregloTmp.getCadena());
             if(arregloTmp.tamaniosDimensiones.size() != dimensiones.size())
@@ -258,14 +262,17 @@ public class Declaracion implements Instruccion
                 /*Aquí deberíamos */
                 Expresion tmp = new ExpresionArreglo(tipo,dimensiones,linea,columna);
                 valor = tmp.getValor(entorno);
+                rol = ARREGLO;
                 Simbolo s = this.dimensiones == 0 ? 
                     new Simbolo(tipo,id,valor,linea,columna):
-                    new Simbolo(tipo,id,valor,dimensiones ,linea,columna);            
+                    new Simbolo(tipo,id,valor,dimensiones ,linea,columna);    
+                s.rol = rol;
                 entorno.insertar(s);
             } 
             else // en este caso es una declaración de una estructura con valor nulo (a huevos, solo es declaración). 
             {
                 Simbolo s = new Simbolo(tipo,id,valor,linea,columna);
+                s.rol = rol;
                 entorno.insertar(s);
             }
         }
@@ -279,6 +286,7 @@ public class Declaracion implements Instruccion
             else
             {
                 Arreglo arrTmp = (Arreglo)valor;
+                rol = ARREGLO;
                 NodoNario nodoTmp = arrTmp.raiz;                
                 for(int x = 0 ; x < dimensiones.size(); x++)
                 {
@@ -325,7 +333,9 @@ public class Declaracion implements Instruccion
                 }
                 
                 /*Verificamos lo los números de elementos de las dimensiones.*/                
-                entorno.insertar(new Simbolo(tipo,id,valor,new ArrayList<Expresion>() ,linea,columna));
+                Simbolo simb = new Simbolo(tipo,id,valor,new ArrayList<Expresion>() ,linea,columna);
+                simb.rol = rol;
+                entorno.insertar(simb);
             }                                                    
         }
         return this;

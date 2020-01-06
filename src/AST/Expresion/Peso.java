@@ -32,7 +32,7 @@ public class Peso implements Expresion
     @Override
     public Object getValor(Entorno ent) 
     {
-        Simbolo simboloBuscado = ent.obtener(nombre);
+        Simbolo simboloBuscado = ent.obtener(nombre);        
         if(simboloBuscado==null)
         {
             Utilidades.Singlenton.registrarErrorSemantico(nombre, "Estructura no encontrada.", linea, columna);
@@ -43,7 +43,7 @@ public class Peso implements Expresion
         if(simboloBuscado.rol == Simbolo.Rol.VAR)
         {
             if(simboloBuscado.tipo.isPrimitivo())
-            {
+            {                
                 return 1;
             }
             else

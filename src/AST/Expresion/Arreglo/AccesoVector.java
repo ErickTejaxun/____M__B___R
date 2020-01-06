@@ -36,6 +36,7 @@ public class AccesoVector implements Expresion
     public Object getValor(Entorno ent) 
     {        
         Object valor = origen.getValor(ent);
+        tipo = origen.getTipo();
         if(valor!=null)
         {
             if(valor instanceof Arreglo)
@@ -43,7 +44,7 @@ public class AccesoVector implements Expresion
                 Arreglo arregloActual = (Arreglo)valor;   
                 Utilidades.Singlenton.linea = linea;
                 Utilidades.Singlenton.columna= columna;
-                tipo = arregloActual.getTipo();
+                //tipo = arregloActual.raiz.tipo;
                 
                 /*Comprobamos que coincidan las dimensiones*/                
                 if(arregloActual.tamaniosDimensiones.size() < listaExpresiones.size())
@@ -55,11 +56,12 @@ public class AccesoVector implements Expresion
                 for(Expresion exp : listaExpresiones)
                 {
                     Object resultado = exp.getValor(ent);
+                    //tipo = exp.getTipo();
                     if(resultado==null){return null;};
                     if(exp.getTipo().isNumeric())
                     {
                         if(exp.getTipo().typeprimitive == INT)
-                        {
+                        {                            
                             coordenasActules.add((int)resultado);
                         }
                         else
@@ -80,6 +82,7 @@ public class AccesoVector implements Expresion
                     }
                 } 
                 Object result = arregloActual.getValor(coordenasActules);
+                //tipo = arregloActual.getTipo();
                 if(result==null && arregloActual.getTipo().isPrimitivo())
                 {
                     Utilidades.Singlenton.registrarError("indice", "Error de desborde de índice de acceso al arreglo." , ErrorC.TipoError.SEMANTICO, linea, columna);  
@@ -100,7 +103,7 @@ public class AccesoVector implements Expresion
     @Override
     public Tipo getTipo() 
     {
-        return tipo;
+        return tipo==null? new Tipo(NULO):tipo;
     }
 
     @Override
