@@ -72,11 +72,19 @@ public class AlClick implements Instruccion, Expresion
     {
         if(instrucciones instanceof Bloque)
         {
-            Bloque bloque = (Bloque)instrucciones;
-            bloque.crearHilo();
-            Object valor =  bloque.ejectuar(new Entorno(ent, Utilidades.Singlenton.ventana));
-            Utilidades.Singlenton.ventana.mostrarErrores();
-            return valor;
+            try 
+            {
+                Bloque bloque = (Bloque)instrucciones;
+                bloque.crearHilo();
+                Object valor =  bloque.ejectuar(new Entorno(ent, Utilidades.Singlenton.ventana));
+                Utilidades.Singlenton.ventana.mostrarErrores();
+                return valor;                
+            } 
+            catch (Exception e) 
+            {
+                Utilidades.Singlenton.ventana.mostrarErrores();
+                return null;
+            }
         }        
         return null;
     }

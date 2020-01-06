@@ -15,6 +15,8 @@ import AST.Instruccion.Bloque;
 import AST.Instruccion.Instruccion;
 import AST.Nodo;
 import java.awt.Component;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -60,6 +62,12 @@ public class AbrirVentana implements Instruccion
             {   
                 Iniciar_Ventana ventana = (Iniciar_Ventana)s;
                 JFrame frame = new JFrame();
+                frame.addWindowListener(new WindowAdapter() {
+                    public void WindowClosing(WindowEvent e) {
+                        Utilidades.Singlenton.continuarEjecucion = true;
+                        frame.dispose();
+                    }
+                });                
                 frame.setLayout(null);
                 frame.setTitle(id);
                 frame.setBounds(0,0,600,600);    
@@ -363,6 +371,7 @@ public class AbrirVentana implements Instruccion
                 } 
             }            
         }
+        Utilidades.Singlenton.continuarEjecucion = false;
         return null;
     }
 

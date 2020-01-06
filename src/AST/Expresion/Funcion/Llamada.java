@@ -12,6 +12,8 @@ import AST.Entorno.Simbolo;
 import AST.Entorno.Tipo;
 import static AST.Entorno.Tipo.TypePrimitive.*;
 import static AST.Entorno.Tipo.TypePrimitive.*;
+import AST.Expresion.Arreglo.Arreglo;
+import AST.Expresion.Arreglo.NodoNario;
 import AST.Expresion.Expresion;
 import AST.Expresion.Variable;
 import Utilidades.ErrorC;
@@ -88,6 +90,11 @@ public class Llamada implements Expresion
                     switch(nombreMetodo)
                     {
                         case "gettexto":
+                            if(componente.valor instanceof JLabel)
+                            {
+                                tipo = new Tipo(STRING);
+                                return ((JLabel)componente.valor).getText();
+                            }                            
                             if(componente.valor instanceof JTextField)
                             {
                                 tipo = new Tipo(STRING);
@@ -107,9 +114,19 @@ public class Llamada implements Expresion
                             {
                                 tipo = new Tipo(STRING);
                                 return ((JSpinner)componente.valor).getValue().toString();                                
-                            }                              
+                            }    
+                            if(componente.valor instanceof JButton)
+                            {
+                                tipo = new Tipo(STRING);
+                                return ((JButton)componente.valor).getText().toString();                                
+                            }                             
                             break;
                         case "getancho":
+                           if(componente.valor instanceof JLabel)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JLabel)componente.valor).getWidth();
+                            }                            
                             if(componente.valor instanceof JTextField)
                             {
                                 tipo = new Tipo(INT);
@@ -118,19 +135,91 @@ public class Llamada implements Expresion
                             if(componente.valor instanceof JTextArea)
                             {
                                 tipo = new Tipo(INT);
-                                return ((JTextArea)componente.valor).getText();                                
+                                return ((JTextArea)componente.valor).getWidth();                                
                             }
                             if(componente.valor instanceof JPasswordField)
                             {
                                 tipo = new Tipo(INT);
-                                return ((JPasswordField)componente.valor).getText();                                
+                                return ((JPasswordField)componente.valor).getWidth();                                
                             }    
                             if(componente.valor instanceof JSpinner)
                             {
                                 tipo = new Tipo(INT);
-                                return ((JSpinner)componente.valor).getValue().toString();                                
+                                return ((JSpinner)componente.valor).getWidth();                                
+                            }  
+                            if(componente.valor instanceof JButton)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JButton)componente.valor).getWidth();
                             }                              
-                            break;                            
+                            break;   
+                        case "getalto":
+                           if(componente.valor instanceof JLabel)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JLabel)componente.valor).getHeight();
+                            }                            
+                            if(componente.valor instanceof JTextField)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JTextField)componente.valor).getHeight();
+                            }
+                            if(componente.valor instanceof JTextArea)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JTextArea)componente.valor).getHeight();                                
+                            }
+                            if(componente.valor instanceof JPasswordField)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JPasswordField)componente.valor).getHeight();                                
+                            }    
+                            if(componente.valor instanceof JSpinner)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JSpinner)componente.valor).getHeight();                                
+                            }  
+                            if(componente.valor instanceof JButton)
+                            {
+                                tipo = new Tipo(INT);
+                                return ((JButton)componente.valor).getHeight();
+                            }                              
+                            break; 
+                        case "getpos":
+                           Arreglo nuevoArreglo = new Arreglo();
+                           nuevoArreglo.tipo = tipo = new Tipo(INT);   
+                           nuevoArreglo.raiz = new NodoNario(null, tipo,linea,columna);
+                           if(componente.valor instanceof JLabel)
+                            {                                                                                                
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JLabel)componente.valor).getX(), tipo,linea,columna));
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JLabel)componente.valor).getY(), tipo,linea,columna));
+                            }                            
+                            if(componente.valor instanceof JTextField)
+                            {
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JTextField)componente.valor).getX(), tipo,linea,columna));
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JTextField)componente.valor).getY(), tipo,linea,columna));
+                            }
+                            if(componente.valor instanceof JTextArea)
+                            {
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JTextArea)componente.valor).getX(), tipo,linea,columna));
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JTextArea)componente.valor).getY(), tipo,linea,columna));                               
+                            }
+                            if(componente.valor instanceof JPasswordField)
+                            {
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JPasswordField)componente.valor).getX(), tipo,linea,columna));
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JPasswordField)componente.valor).getY(), tipo,linea,columna));                             
+                            }    
+                            if(componente.valor instanceof JSpinner)
+                            {
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JSpinner)componente.valor).getX(), tipo,linea,columna));
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JSpinner)componente.valor).getY(), tipo,linea,columna));                                
+                            }  
+                            if(componente.valor instanceof JButton)
+                            {
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JButton)componente.valor).getX(), tipo,linea,columna));
+                                nuevoArreglo.raiz.addHijo(new NodoNario(((JButton)componente.valor).getY(), tipo,linea,columna)); 
+                            }                                                          
+                            return nuevoArreglo;
                         
                     }                     
                 }
