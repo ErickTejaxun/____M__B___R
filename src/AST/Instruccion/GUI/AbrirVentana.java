@@ -177,7 +177,7 @@ public class AbrirVentana implements Instruccion
                                             }
                                             if(objComponente instanceof  JTextField)
                                             {
-                                                JTextField textField = (JTextField)objComponente;
+                                                JTextField textField = (JTextField)objComponente;                                                   
                                                 textField.setBounds(textField.getX(),textField.getY(), textField.getWidth(), 
                                                         tipoAlto.isDouble() ? (int)(double) objAlto : tipoAlto.isInt() ? (int)objAlto : (char) objAlto);
                                             }
@@ -261,7 +261,7 @@ public class AbrirVentana implements Instruccion
                                             }  
                                              if(objComponente instanceof  JPasswordField)
                                             {
-                                                JPasswordField textField = (JPasswordField)objComponente;
+                                                JPasswordField textField = (JPasswordField)objComponente;                                                
                                                 textField.setBounds(textField.getX(),textField.getY(), 
                                                         tipoAncho.isDouble() ? (int)(double) objAncho : tipoAncho.isInt() ? (int)objAncho : (char) objAncho,
                                                         textField.getHeight()
