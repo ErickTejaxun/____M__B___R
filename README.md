@@ -19,9 +19,16 @@ Características del Lenguaje MBR
   - Reporte de errores léxicos, sintácticos y semánticos. 
 
 # Lenguaje MBR
-
+  Para ver todos los detalles de la arquitectura del lenguaje de programación MBR ir a Manuales/enunciado.pdf. 
   - El lenguaje MBR es un lenguaje de programación que cumple con paradigma estructurado e iterativo, al más estilo de C. 
   - Soporte para estructuras (Fusion)
   - Interpréte desarrollado utilizando el patrón de diseño Interpreter y ayudado del patrón de diseño singlenton. 
   - Análisis léxico a través de JFlex
   - Análisis sintáctico a través de CUP.
+
+# Autor
+  Erick Tejaxún
+  erickteja@gmail.com
+
+# Licencia 
+  MIT :v
